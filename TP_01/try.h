@@ -2,15 +2,13 @@
 #define CTX_MAGIC 0xCAFEBABE
 #endif
 
-struct ctx_s {
-  int ctx_magic;
-  void* ctx_esp;
-  void* ctx_ebp;
-  char* stack;
-  func_t entrypoint;
-};
+typedef int (func_t)(int); /* a function that returns an int from an int */
 
-typedef int (func_t) (int);
+struct ctx_s {
+    unsigned magic;
+    void *ebp;
+    void *esp;
+};
 
 int try(struct ctx_s *pctx, func_t *f, int arg);
 

@@ -24,3 +24,5 @@ struct ctx_s {
 };
 
 int init_ctx(struct ctx_s* ctx, int stack_size, func_t f, void* args);
+
+void switch_to_ctx(struct ctx_s* ctx);

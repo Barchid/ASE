@@ -1,19 +1,44 @@
-#include "try.h"
 #include <assert.h>
-#include <stdio.h>
+#include "try.h"
 
-int try(struct ctx_s *pctx, func_t *f, int arg){
-  pctx->ctx_magic = CTX_MAGIC;
-  asm("movl %%esp, %0""\n\t""movl %%ebp, %1":"=r"(pctx->ctx_esp),"=r"(pctx->ctx_ebp));
-  printf("-->%p-%p\n", pctx->ctx_esp, pctx->ctx_ebp);
-  return f(arg);
-}
+int try
+    (struct ctx_s *pctx, func_t *f, int arg)
+    {
+        // initialiser le champ magic
+        pctx->magic = CTX_MAGIC;
 
-int throw(struct ctx_s *pctx, int r){
-  static int c_r = 0;
-  c_r = r;
-  assert(pctx->ctx_magic == CTX_MAGIC);
-  printf("-->%p-%p\n", pctx->ctx_esp, pctx->ctx_ebp);
-  asm("movl %0, %%esp""\n\t""movl %1, %%ebp": :"r"(pctx->ctx_esp),"r"(pctx->ctx_ebp));
-  return c_r;
+        // Mémoriser %esp dans contexte
+        asm("movl %%esp, %0"
+            : "=r"(pctx->esp));
+
+        // Mémoriser %ebp dans contexte
+        asm("movl %%ebp, %0"
+            : "=r"(pctx->ebp));
+
+        // appeler la fonction
+        return f(arg);
+    }
+
+int throw(struct ctx_s * pctx, int r)
+{
+    // pour retourner r, il faut l'enregistrer en static car quand on change de registre, on n'y a plus accès
+    static int copy_r = 0;
+
+    // Check si pctx->magic est bien égal à CTX_MAGIX
+    assert(pctx->magic == CTX_MAGIC);
+    pctx->magic = 0;
+
+    copy_r = r;
+
+    // Placer ebp et esp du contexte dans les registres
+    asm("movl %0, %%esp"
+        :
+        : "r"(pctx->esp));
+
+    asm("movl %0, %%ebp"
+        :
+        : "r"(pctx->ebp));
+
+    // renvoyer l'entier en paramètre (changement de registre, donc on renvoie la copie statique)
+    return copy_r;
 }
