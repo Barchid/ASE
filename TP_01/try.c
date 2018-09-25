@@ -8,11 +8,11 @@ int try
         pctx->magic = CTX_MAGIC;
 
         // Mémoriser %esp dans contexte
-        asm("movl %%esp, %0"
+        asm("mov %%rsp, %0"
             : "=r"(pctx->esp));
 
         // Mémoriser %ebp dans contexte
-        asm("movl %%ebp, %0"
+        asm("mov %%rbp, %0"
             : "=r"(pctx->ebp));
 
         // appeler la fonction
@@ -31,11 +31,11 @@ int throw(struct ctx_s * pctx, int r)
     copy_r = r;
 
     // Placer ebp et esp du contexte dans les registres
-    asm("movl %0, %%esp"
+    asm("mov %0, %%rsp"
         :
         : "r"(pctx->esp));
 
-    asm("movl %0, %%ebp"
+    asm("mov %0, %%rbp"
         :
         : "r"(pctx->ebp));
 

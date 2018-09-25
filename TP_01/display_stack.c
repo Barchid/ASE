@@ -26,7 +26,7 @@ int main(int argc, char const *argv[]) {
    int* i;
    int* j;
 
-   asm("movl %%esp, %0""\n\t""movl %%ebp, %1"::"r"(esp),"r"(ebp));
+   asm("mov %%rsp, %0""\n\t""mov %%rbp, %1"::"r"(esp),"r"(ebp));
 
    printf("esp:%p\nebp:%p\n----------\n", esp, ebp);
    printf("i:%p\nj :%p\n----------\n", i, j);
