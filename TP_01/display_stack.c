@@ -1,8 +1,7 @@
  #include <stdio.h>
 
-void aff_reg(int* x, int* y);
+void aff_reg(int x, int y);
 void a();
-void b();
 
 /*
  * Le registre ESP pointe le sommet de la frame dans la pile, il est normal que ce soit l'adresse la plus petite
@@ -11,39 +10,49 @@ void b();
  */
 
 int main(int argc, char const *argv[]) {
-   int x = 3;
-   int y = 5;
-   printf("x:%p\ny :%p\n----------\n", &x, &y);
-   aff_reg(&x, &y);
-   a();
-   return 0;
+	int i = 3;
+	int j = 5;
+	void* esp;
+	void* ebp;
+    asm("mov %%rsp, %0""\n\t""mov %%rbp, %1":"=r"(esp),"=r"(ebp));
+	
+	printf("Fonction main()\n###################\n");
+	printf("esp vaut : %p\nebp vaut :%p\n", esp, ebp);
+	printf("La variable locale i vaut :%p\nla variable locale j vaut :%p\n", &i, &j);
+	aff_reg(i, j);
+	a();
+	return 0;
 }
 
- void aff_reg(int* x, int* y){
-   void* esp;
-   void* ebp;
-
-   int* i;
-   int* j;
-
-   asm("mov %%rsp, %0""\n\t""mov %%rbp, %1"::"r"(esp),"r"(ebp));
-
-   printf("esp:%p\nebp:%p\n----------\n", esp, ebp);
-   printf("i:%p\nj :%p\n----------\n", i, j);
-   printf("x:%p\ny :%p\n----------\n", x, y);
+ void aff_reg(int x, int y){
+	int i = 3;
+	int j = 2;
+	void* esp;
+	void* ebp;
+    asm("mov %%rsp, %0""\n\t""mov %%rbp, %1":"=r"(esp),"=r"(ebp));
+	
+	printf("Fonction aff_reg()\n###################\n");
+	printf("esp vaut : %p\nebp vaut :%p\n", esp, ebp);
+	printf("La variable locale i vaut :%p\nla variable locale j vaut :%p\n", &i, &j);
+	printf("Le paramètre x vaut :%p\nLe paramètre y vaut :%p\n###################\n\n", &x, &y);
+	a();
  }
 
  void a(){
-   int x = 3;
-   int y = 5;
-   printf("x:%p\ny :%p\n----------\n", &x, &y);
-   aff_reg(&x, &y);
-   b();
- }
+	static int fin = 0;
+	int i = 3;
+	int j = 2;
+	void* esp;
+	void* ebp;
+	asm("mov %%rsp, %0""\n\t""mov %%rbp, %1":"=r"(esp),"=r"(ebp));
 
- void b(){
-    int x = 3;
-    int y = 5;
-    printf("x:%p\ny :%p\n----------\n", &x, &y);
-    aff_reg(&x, &y);
+	printf("Fonction a() numero %d\n###################\n", fin);
+	printf("esp vaut : %p\nebp vaut :%p\n", esp, ebp);
+	printf("La variable locale i vaut :%p\nla variable locale j vaut :%p\n", &i, &j);
+	printf("##################################\n\n");
+	
+	if(!fin) {
+		fin++;
+		aff_reg(i, j);
+	}
  }
