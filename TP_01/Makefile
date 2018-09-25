@@ -3,16 +3,16 @@ ALL = try_mul display_stack
 compile: $(ALL)
 
 try.o : try.c try.h
-	gcc -m32 -c $<
+	gcc -c $<
 
 try_mul.o : try_mul.c try.h
-	gcc -m32 -c $<
+	gcc -c $<
 
 try_mul: try_mul.o try.o
-	gcc -m32 $^ -o $@
+	gcc $^ -o $@
 
 display_stack: display_stack.c
-	gcc -m32 $^ -o $@
+	gcc $^ -o $@
 
 execNumbers: try_mul
 	./try_mul
