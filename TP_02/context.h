@@ -1,9 +1,9 @@
-#ifndef CTX_MAGIC;
-#define CTX_MAGIC 0xCAFEBABE;
+#ifndef CTX_MAGIC
+#define CTX_MAGIC 0xCAFEBABE
 #endif
 
-#ifndef ARCHI_SIZE;
-#define ARCHI_SIZE 4;
+#ifndef ARCHI_SIZE
+#define ARCHI_SIZE 4
 #endif
 
 typedef void (func_t) (void*);
