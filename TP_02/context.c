@@ -2,49 +2,54 @@
 #include <assert.h>
 #include <stdio.h>
 
-int init_ctx(struct ctx_s *ctx, int stack_size, func_t f, void *args)
-{
-    // Activated flag to false
-    ctx->activated = FALSE;
+static struct ctx_s main_ctx;
+static struct ctx_s *current_ctx = NULL;
 
-    // Find adress of stack
-    asm("movl %%ss, %1" :"=r"(ctx->stack));
+int init_ctx(struct ctx_s *ctx, int stack_size, func_t f, void *args) {
+    // initialiser le champ magic
+    ctx->ctx_magic = CTX_MAGIC;
+    ctx->ctx_state = CTX_INIT;
+    ctx->ctx_f = f;
+    ctx->ctx_arg = args;
 
-    // Init stack
-    if(malloc(ctx->stack, stack_size * sizeof(char)) == -1) {
-       perror("Malloc error");
-       return 0;
-    }
+    ctx->ctx_base = malloc(stack_size);
+    assert(ctx->ctx_base);
+    ctx->ctx_esp = ctx -> ctx_ebp = ctx -> ctx_base + stack_size - ARCHI_SIZE;
+}
 
-    // Set esp --> mov ss, esp
-    ctx->esp = (void*) ctx->stack;
+void start_current_ctx() {
+    current_ctx->ctx_state = CTX_EXEC
+    current_ctx->ctx_f(current_ctx->ctx_arg);
+    current_ctx->ctx_state = CTX_END;
+    puts("Contexte terminé");
 
-    // Set ebp
-    ctx->ebp = (void*) ctx->stack + stack_size;
+    asm("movl %0, %%esp" "\n\t" "movl %1, %%ebp"
+    :
+    : "r" (main_ctx.ctx_esp)
+    ,"r" (main_ctx.ctx_ebp));
 
-    // Assign function
-    ctx->entrypoint = &f;
-    ctx->args = args;
-
-    // return
-    return 1;
 }
 
 void switch_to_ctx(struct ctx_s* ctx) {
-    static struct ctx_s courant;
-    // sauvegarde pointeurs de pile dans contexte courant
-
-    // ctx devient ccontexte courant
-    // ctx->ebp/esp dans registres
-    // On doit bouger ss ?
-    asm("movl %0, %%esp" "\n\t" "movl %1, %%ebp": :"r"(ctx->esp),"r"(ctx->ebp));
-
-    //Si le ctx n'a jamais été activé, on l'active
-    if(ctx->activated) {
-        return;
+    assert(ctx->ctx_state == CTX_INIT || ctx->ctx_state == CTX_EXEC || ctx->ctx_magic);
+    if(current_ctx){
+        asm("movl %%esp, %0" "\n\t" "movl %%ebp, %1"
+        : "=r" (current_ctx->ctx_esp)
+        ,"=r" (current_ctx->ctx_ebp));
     }
-    else {
-        ctx->activated = 0;
-        ctx->entrypoint(ctx->args);
+    else{
+        asm("movl %%esp, %0" "\n\t" "movl %%ebp, %1"
+        : "=r" (main_ctx.ctx_esp)
+        ,"=r" (main_ctx.ctx_ebp));
     }
+
+    current_ctx = ctx;
+
+    asm("movl %0, %%esp" "\n\t" "movl %1, %%ebp"
+    :
+    : "r" (current_ctx->ctx_esp)
+    ,"r" (current_ctx->ctx_ebp));
+
+    if(current_ctx->ctx_state == CTX_INIT)
+        start_current_ctx();
 }
