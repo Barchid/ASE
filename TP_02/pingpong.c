@@ -23,13 +23,13 @@ int main(int argc, char *argv[])
 
 void f_ping(void *args)
 {
-	//init_ctx(&ctx_pang, 16384, f_pang, NULL); // TEST où on initialise le contexte de pang dans une autre fonction
+	init_ctx(&ctx_pang, 16384, f_pang, NULL); // TEST où on initialise le contexte de pang dans une autre fonction
     while(1) {
         printf("A") ;
         switch_to_ctx(&ctx_pong);
         printf("B") ;
         switch_to_ctx(&ctx_pong);
-		// switch_to_ctx(&ctx_pang); // TEST avec pang
+		switch_to_ctx(&ctx_pang); // TEST avec pang
         printf("C") ;
         switch_to_ctx(&ctx_pong);
     }
@@ -42,7 +42,7 @@ void f_pong(void *args)
         switch_to_ctx(&ctx_ping);
         printf("2") ;
         switch_to_ctx(&ctx_ping);
-		// switch_to_ctx(&ctx_pang); // TEST avec pang
+		switch_to_ctx(&ctx_pang); // TEST avec pang
     }
 }
 
