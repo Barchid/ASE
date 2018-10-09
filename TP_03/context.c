@@ -139,11 +139,11 @@ void switch_to_ctx(struct ctx_s *ctx)
     // Vérifier que le contexte n'est pas terminé (état CTX_END)
     assert(ctx->ctx_state == CTX_INIT || ctx->ctx_state == CTX_EXEC || ctx->ctx_magic == CTX_MAGIC);
 
-    irq_disable(); // ignorer les interruptions
+    irq_disable(); // ignorer les interruptions pour ne pas ignorer 
 
     while (ctx->ctx_state == CTX_END)
     {
-        //
+        // S'il n'y a plus de contexte dans notre scheduler
         if (ctx == ctx->ctx_next)
         {
             // On rend la main au main()
@@ -190,6 +190,7 @@ void switch_to_ctx(struct ctx_s *ctx)
     current_ctx = ctx;
 
     // Déplacer esp/ebp dans le nouveau contexte
+	// On ne peut pas être interrompu ici car sinon on a un esp/ebp incohérent (qui ne pointe pas le même contexte)
     irq_disable();
     asm("movl %0, %%esp"
         "\n\t"
@@ -231,11 +232,11 @@ void start_sched()
 }
 
 void irq_disable() {
-    _mask(15);
+    _mask(15); // Désactiver les interruptions
 }
 
 void irq_enable() {
-    _mask(1);
+    _mask(1); // Réactiver les interruptions
 }
 
 void handler() {
