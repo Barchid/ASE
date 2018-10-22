@@ -32,15 +32,6 @@ frmt.o: frmt.c drive.h hw.h
 frmt: frmt.o drive.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
-execDmps: dmps
-	./dmps
-
-execAdhoc: adhoc
-	./adhoc
-
-execFrmt: frmt
-	./frmt
-
 compile: $(ALL)
 
 clean:
