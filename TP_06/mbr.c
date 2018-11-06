@@ -23,6 +23,10 @@ struct mbr_s {
 
 static struct mbr_s mbr; // le MBR
 
+unsigned int sector_of_block(unsigned int num_vol, unsigned int num_block);
+
+unsigned int cylinder_of_block(unsigned int num_vol, unsigned int num_block);
+
 // Charge le Master boot record dans la struct mbr
 unsigned int load_mbr(){
     int i;
@@ -61,7 +65,7 @@ void save_mbr(){
 
 // Crée une partition
 unsigned int create_vol(unsigned int cylinder, unsigned int sector, unsigned int size, enum vol_type_e vol_type) {
-    int i;
+    int i, lastCylinder, lastCylinderVol, lastSector, lastSectorVol;
     
 	// Vérifier que le mbr a été initialisé
     assert(mbr.mbr_magic == MBR_MAGIC);
@@ -69,17 +73,30 @@ unsigned int create_vol(unsigned int cylinder, unsigned int sector, unsigned int
 	// Vérifier que la partition à ajouter n'est pas NONE
     assert(vol_type != VNONE);
 
-    // Vérifier cylinder n'est pas dans une partition
-    // Vérifier sector n'est pas dans une partition
-    // Vérifier last cylinder pas dans une partition
+    
     // Vérifier last sector pas dans une partition
     for(i=0;i<MAX_VOL;i++) {
         if(mbr.mbr_vols[i].vol_type != VNONE) {
-            //assert(cylinder <= );
-            //assert(sector <= );
-            //assert(cylinder <= );
-            //assert(cylinder <= );
-            //s = (s0 + b) % NSPC
+            lastCylinder = cylinder + (size / HDA_MAXSECTOR);
+            lastCylinderVol = cylinder_of_block(i, mbr.mbr_vols[i].vol_n_sectors - 1);
+            lastSector = sector + (size / HDA_MAXSECTOR);
+            lastSectorVol = sector_of_block(i, mbr.mbr_vols[i].vol_n_sectors - 1);
+
+            // Vérifier que le premier cylindre et secteur de la partition à créer n'est pas compris dans la partition[i]
+            assert(
+                cylinder < mbr.mbr_vols[i].vol_first_cylinder ||
+                cylinder > lastCylinderVol ||
+                (cylinder =  mbr.mbr_vols[i].vol_first_cylinder && sector < mbr.mbr_vols[i].vol_first_sector) ||
+                (cylinder =  lastCylinderVol && sector > lastSectorVol)
+            );
+
+            // Vérifier que le dernier cylindre et secteur de la partition à créer n'est pas compris dans la partition[i]
+            assert(
+                lastCylinder < mbr.mbr_vols[i].vol_first_cylinder ||
+                lastCylinder > lastCylinderVol ||
+                (lastCylinder =  mbr.mbr_vols[i].vol_first_cylinder && sector < mbr.mbr_vols[i].vol_first_sector) || 
+                (lastCylinder =  lastCylinderVol && lastSector > lastSectorVol)
+            );
         }
     }
 	
@@ -97,6 +114,12 @@ unsigned int create_vol(unsigned int cylinder, unsigned int sector, unsigned int
     }
 
     return 0;
+}
+
+// supprimer le volume de numero num_vol
+void delete_vol(unsigned int num_vol) {
+    assert(num_vol <= MAX_VOL);
+    mbr.mbr_vols[num_vol].vol_type = VNONE;
 }
 
 char* enumToString(enum vol_type_e vol_type){

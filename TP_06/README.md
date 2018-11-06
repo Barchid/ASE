@@ -1,34 +1,26 @@
-# TP 05 ASE
+# TP 06 ASE
 
 ## Compilation
-Lancer la commande ``make compile`` permet de compiler trois fichiers exécutables : dmps, frmt, adhoc.
+Lancer la commande ``make compile`` permet de compiler trois fichiers exécutables : dvol, mkvol, vm.
 
-### dmps
-Exécutable qui lit un secteur du disque et l'affiche sur la sortie standard.
+### dvol
+Exécutable qui liste les partitions du disque.
 
 Usage : 
-``./dmps cylindre secteur`` 
+``./dvol`` 
 
-``cylindre`` est le numéro de cylindre du secteur à afficher.
-``secteur`` est le numéro de secteur du secteur à afficher.
-
-### frmt
-Exécutable qui formate un nombre de secteurs donné à partir d'un secteur donné avec une valeur spécifiée.
+### mkvol
+Exécutable qui crée un volume.
 
 Usage :
-``./frmt cylindre secteur nsecteurs value``
+``./mkvol cylindre secteur nblock``
 
-``cylindre`` est le numéro de cylindre du secteur à partir duquel on formate le disque.
-``secteur`` est le numéro de secteur du secteur à partir duquel on formate le disque.
-``nsecteurs`` est le nombre de secteurs qui vont être formatés.
-``value`` est la valeur à laquelle on va formater le disque.
+``cylindre`` est le numéro de cylindre du disque à partir duquel on crée la partition.
+``secteur`` est le numéro de secteur du disque à partir duquel on crée la partition.
+``nblock`` est le nombre de blocs de la partition à créer.
 
-### adhoc
-Exécutable qui écrit une valeur spécifiée dans un secteur donné.
+### vm
+Exécutable interactif en ligne de commande pour tester l'application.
 
 Usage :
-``./adhoc cylindre secteur value``
-
-``cylindre`` est le numéro de cylindre du secteur que l'on va écrire.
-``secteur`` est le numéro de secteur du secteur que l'on va écrire.
-``value`` est la valeur que l'on va écrire dans le secteur spécifié.
+``./vm``

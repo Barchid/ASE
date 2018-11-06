@@ -1,6 +1,6 @@
 ROOTDIR=/home/enseign/ASE
 
-ALL = mkvol dvol
+ALL = mkvol dvol vm
 CC	= gcc
 CFLAGS	= -m32 -Wall -pedantic 
 CFLAGS  += -g
@@ -29,7 +29,13 @@ dvol.o: dvol.c drive.h mbr.h
 dvol: dvol.o drive.o mbr.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
+vm.o: vm.c drive.h mbr.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
+
+vm: vm.o drive.o mbr.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+
 compile: $(ALL)
 
 clean:
-	rm -f *.o *.s mkvol dvol
+	rm -f *.o *.s mkvol dvol vm
