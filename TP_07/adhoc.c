@@ -11,6 +11,9 @@ int main() {
 	char choice;
 	unsigned int continueNew = 1;
 	unsigned int cpt = 0;
+	int i;
+	int current_vol = load_current_volume();
+	int randomBlock;
     init();
 
 	srand(time(NULL));
@@ -23,12 +26,13 @@ int main() {
             exit(EXIT_SUCCESS);
         }
     }
-	
-	init_volume(load_current_volume());
+
+	init_volume(current_vol);
 	
 	// new block jusqu'à ce que le disque soit plein
 	while(continueNew) {
 		continueNew = new_block();
+		if(continueNew) printf("Bloc créé au bloc numéro : %d\n", continueNew);
 	}
     
 	// vérifier que le disque est plein
@@ -36,7 +40,9 @@ int main() {
 	
 	// itérer 5 fois sur freeblock en aléatoire
 	for(i = 0;i < RANDOM_IT; i++) {
-		free_bloc(rand(1, get_vol_size())); // TODO : à tester
+		randomBlock = rand() % (get_vol_size(current_vol) - 1 + 1 - 1) + 1;
+		free_bloc(randomBlock);
+		printf("Bloc libéré à l'indice : %d\n", randomBlock);
 	}
 	
 	// afficher le statut du disque
@@ -46,6 +52,7 @@ int main() {
 	continueNew = 1;
 	while(continueNew) {
 		continueNew = new_block();
+		if(continueNew) printf("Bloc créé au bloc numéro : %d\n", continueNew);
 		cpt++;
 	}
 	cpt--;
