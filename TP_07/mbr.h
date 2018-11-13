@@ -33,3 +33,5 @@ unsigned int new_block();
 void free_bloc(unsigned int bloc);
 
 void occupancy_free_rate();
+
+unsigned int get_vol_size(unsigned int vol);

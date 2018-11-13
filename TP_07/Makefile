@@ -1,6 +1,6 @@
 ROOTDIR=/home/enseign/ASE
 
-ALL = mknfs dfs mkvol dvol
+ALL = mknfs dfs mkvol dvol adhoc
 CC	= gcc
 CFLAGS	= -m32 -Wall -pedantic 
 CFLAGS  += -g
@@ -43,6 +43,12 @@ dfs.o: dfs.c drive.h mbr.h current.h
 	$(CC) $(CFLAGS) $(INCS) -c $<
 
 dfs: dfs.o drive.o mbr.o current.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+	
+adhoc.o: adhoc.c drive.h mbr.h current.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
+
+adhoc: adhoc.o drive.o mbr.o current.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 compile: $(ALL)

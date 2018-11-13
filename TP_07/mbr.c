@@ -363,7 +363,7 @@ void free_bloc(unsigned int bloc) {
 	assert(bloc > 0);
 
     // TODO : Vérifier que bloc n'est pas déjà free (parcourir les blocs libres)
-
+	
     // instancier un nouveau free block
     // On crée une nouvelle liste de blocs free avec un seul élément dedans 
     // et on la chaîne en tête de la liste du super.
@@ -392,4 +392,9 @@ void occupancy_free_rate(){
 
     printf("Free blocks / Total blocks of current volume : %d/%d\n", n_free_blocks, mbr.mbr_vols[current_vol].vol_n_sectors);
     printf("Occupancy free rate of current volume : %0.2f %% \n", (n_free_blocks/(float) (mbr.mbr_vols[current_vol].vol_n_sectors) * 100));
+}
+
+unsigned int get_vol_size(unsigned int vol) {
+	assert(vol < MAX_VOL);
+	return mbr.mbr_vols[vol].vol_n_sectors;
 }
