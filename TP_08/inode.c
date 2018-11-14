@@ -80,14 +80,21 @@ unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, unsigned i
 	// il est dans ma liste de blocs indirects
 	if(fbloc < NNBPB) {
 		// si mon numéro d'inode est null, ça veut dire que j'aurai un bloc plein de 0
-		if(inode.inode_indirect == BLOCK_NULL) {
-			// si je dois allouer
-			// if(do_allocate) {
-			// 	inode.inode_indirect = new_block_zero(); // créer le bloc d'indirect
-            //     // TODO : finir
-			// }
-			
+		if(inode.inode_indirect == BLOCK_NULL && !do_allocate) {
 			return BLOCK_NULL;
+		}
+
+		// je dois allouer sur le bloc d'indirect alors qu'il n'est pas encore initialisé
+		if(do_allocate && inode.inode_indirect == BLOCK_NULL) {
+			inode.inode_indirect = new_block_zero(); // créer le bloc d'indirect
+
+			// sauvegarder l'inode
+			write_inode(inumber, &inode);
+
+			// il n'y a plus de blocs dispo, on retourne BLOCK_NULL
+			if(inode.inode_indirect == 0) {
+				return BLOCK_NULL;
+			}
 		}
 		
 		read_bloc_size(current_vol, inode.inode_indirect, NNBPB * sizeof(unsigned int), (unsigned char *) blocs);
@@ -98,6 +105,7 @@ unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, unsigned i
 			// écrire le block pour persister le changement
 			write_block_size(current_vol, inode.inode_indirect, NNBPB * sizeof(unsigned int), (unsigned char *) blocs);
 		}
+
 		return blocs[fbloc];
 	}
 	
