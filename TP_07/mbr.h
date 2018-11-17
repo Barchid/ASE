@@ -18,7 +18,7 @@ struct mbr_s {
 };
 
 // le MBR gardé en mémoire
-extern struct mbr_s mbr;
+struct mbr_s mbr;
 
 // Charge le MBR en mémoire (dans la variable statique)
 unsigned int load_mbr();
