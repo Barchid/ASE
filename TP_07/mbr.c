@@ -64,9 +64,9 @@ unsigned int create_vol(unsigned int cylinder, unsigned int sector, unsigned int
     for(i=0;i<MAX_VOL;i++) {
         if(mbr.mbr_vols[i].vol_type != VNONE) {
             lastCylinder = cylinder + (size / HDA_MAXSECTOR);
-            lastCylinderVol = cylinder_of_block(i, mbr.mbr_vols[i].vol_n_sectors - 1);
+            lastCylinderVol = cylinder_of_bloc(i, mbr.mbr_vols[i].vol_n_sectors - 1);
             lastSector = sector + (size / HDA_MAXSECTOR);
-            lastSectorVol = sector_of_block(i, mbr.mbr_vols[i].vol_n_sectors - 1);
+            lastSectorVol = sector_of_bloc(i, mbr.mbr_vols[i].vol_n_sectors - 1);
 
             // Vérifier que le premier cylindre et secteur de la partition à créer n'est pas compris dans la partition[i]
             assert(
@@ -146,7 +146,7 @@ unsigned int cylinder_of_bloc(unsigned int vol, unsigned int nbloc) {
     assert(mbr.mbr_magic == MBR_MAGIC);
 	
 	// Vérifier que le numéro de la partition est correcte
-    assert(num_vol < MAX_VOL);
+    assert(vol < MAX_VOL);
 	
 	// Vérifier que la partition à utiliser existe
     assert(mbr.mbr_vols[vol].vol_type != VNONE);
@@ -181,12 +181,12 @@ void list_vol() {
     }
 }
 
-// Lit le block de la partition n° num_vol
+// Lit le block de la partition n° vol
 void read_bloc(unsigned int vol, unsigned int nbloc, unsigned char *buffer) {
     read_sector(cylinder_of_bloc(vol, nbloc), sector_of_bloc(vol, nbloc), buffer);
 }
 
-// Lit le block de la partition n° num_vol
+// Lit le block de la partition n° vol
 void read_bloc_size(unsigned int vol, unsigned int nbloc, unsigned int size, unsigned char *buffer) {
     read_sector_size(cylinder_of_bloc(vol, nbloc), sector_of_bloc(vol, nbloc), size, buffer);
 }
@@ -201,7 +201,7 @@ void write_bloc_size(unsigned int vol, unsigned int nbloc, unsigned int size, un
     write_sector_size(cylinder_of_bloc(vol, nbloc), sector_of_bloc(vol, nbloc), size, buffer);
 }
 
-// Formate la partition num_vol
+// Formate la partition vol
 void format_vol(unsigned int vol, unsigned int value) {
     assert(mbr.mbr_magic == MBR_MAGIC);
     assert(vol < MAX_VOL);
