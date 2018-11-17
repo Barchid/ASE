@@ -41,9 +41,9 @@ int main() {
 	char choice;
 	unsigned int continueNew = 1;
 	unsigned int cpt = 0;
-	unsigned int i;
+	unsigned int i = 0;
 	unsigned int idx = 0;
-	unsigned int vals[RANDOM_IT];
+	unsigned int vals[RANDOM_IT] = {0, 0, 0, 0, 0};
 	
 	int randomBlock;
 	int current_vol = load_current_volume();
@@ -75,7 +75,7 @@ int main() {
 	// itérer 5 fois sur freeblock en aléatoire
 	while(i < RANDOM_IT) {
 		randomBlock = rand() % (get_vol_size(current_vol) - 1 + 1 - 1) + 1;
-		if(tabContainVal(vals, randomBlock)) {
+		if(!tabContainVal(vals, randomBlock)) {
 			vals[idx] = randomBlock;
 			idx++;
 			free_bloc(randomBlock);
