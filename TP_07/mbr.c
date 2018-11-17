@@ -168,8 +168,8 @@ void list_vol() {
                 mbr.mbr_vols[i].vol_first_sector, 
                 mbr.mbr_vols[i].vol_n_sectors, 
                 enumToString(mbr.mbr_vols[i].vol_type), 
-                cylinder_of_block(i, mbr.mbr_vols[i].vol_n_sectors - 1), 
-                sector_of_block(i, mbr.mbr_vols[i].vol_n_sectors - 1)
+                cylinder_of_bloc(i, mbr.mbr_vols[i].vol_n_sectors - 1), 
+                sector_of_bloc(i, mbr.mbr_vols[i].vol_n_sectors - 1)
             );
         }
         else {

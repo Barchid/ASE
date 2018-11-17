@@ -53,7 +53,7 @@ int load_super(unsigned int vol) {
 	assert(mbr.mbr_vols[vol].vol_type == VBASE);
 
 	// Lire le super block du volume demandé
-	read_block_size(vol, SUPER, sizeof(struct super_s), (unsigned char *) &super);
+	read_bloc_size(vol, SUPER, sizeof(struct super_s), (unsigned char *) &super);
 	
     // vérifier que le super a été initialisé
     assert(super.super_magic == SUPER_MAGIC);
