@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <errno.h>
 #include "mbr.h"
 #include "drive.h"
 #include "bloc.h"
