@@ -27,7 +27,7 @@ load_current_volume ()
     return current_volume;
 }
 
-unsigned int tabContainVal(unsigned int tab[RANDOM_IT], unsigned int val){
+unsigned int tabContainVal(unsigned int tab[], unsigned int val){
 	unsigned int i;
 	for(i=0;i<RANDOM_IT;i++) {
 		if(tab[i] == val) {
@@ -73,14 +73,14 @@ int main() {
 	occupancy_free_rate();
 	
 	// itérer 5 fois sur freeblock en aléatoire
-	for(i = 0;i < RANDOM_IT; i++) {
+	while(i < RANDOM_IT) {
 		randomBlock = rand() % (get_vol_size(current_vol) - 1 + 1 - 1) + 1;
-		
 		if(tabContainVal(vals, randomBlock)) {
 			vals[idx] = randomBlock;
 			idx++;
 			free_bloc(randomBlock);
 			printf("Bloc libéré à l'indice : %d\n", randomBlock);
+			i++;
 		}
 	}
 	
