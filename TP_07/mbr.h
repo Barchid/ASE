@@ -1,6 +1,8 @@
 #define MBR_MAGIC 0xCAFEBABE // Sert à vérifier l'initialisation du MBR
 #define MAX_VOL 8 // nombre de volumes max
 
+enum vol_type_e {VBASE, VANX, VOTH, VNONE}; // types de partition existants
+
 // Structure décrivant une partition
 struct vol_descr_s{
     unsigned int vol_first_sector; // numéro de secteur du premier secteur de la partition
@@ -15,8 +17,6 @@ struct mbr_s {
     unsigned int mbr_magic; // Vérifie si le MBR a été correctement initialisé
 };
 
-enum vol_type_e {VBASE, VANX, VOTH, VNONE};
-
 // Charge le MBR en mémoire (dans la variable statique)
 unsigned int load_mbr();
 
@@ -25,9 +25,6 @@ void save_mbr();
 
 // crée un volume
 unsigned int create_vol(unsigned int cylinder, unsigned int sector, unsigned int size, enum vol_type_e vol_type);
-
-// le MBR gardé en variable statique
-static struct mbr_s mbr;
 
 void delete_vol(unsigned int vol);
 
