@@ -1,4 +1,5 @@
-ROOTDIR=/home/enseign/ASE
+#ROOTDIR=/home/enseign/ASE
+ROOTDIR=.
 
 ALL = mknfs dfs mkvol dvol adhoc
 CC	= gcc
