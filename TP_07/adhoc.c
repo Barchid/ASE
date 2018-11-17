@@ -65,7 +65,7 @@ int main() {
 	
 	// new block jusqu'à ce que le disque soit plein
 	while(continueNew) {
-		continueNew = new_block();
+		continueNew = new_bloc();
 		if(continueNew) printf("Bloc créé au bloc numéro : %d\n", continueNew);
 	}
     
@@ -90,7 +90,7 @@ int main() {
 	// allouer des blocs tant que le disque n'est pas plein, 
 	continueNew = 1;
 	while(continueNew) {
-		continueNew = new_block();
+		continueNew = new_bloc();
 		if(continueNew) printf("Bloc créé au bloc numéro : %d\n", continueNew);
 		cpt++;
 	}
