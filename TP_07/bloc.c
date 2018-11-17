@@ -95,7 +95,7 @@ unsigned int new_bloc() {
 	}
 	else {
 		fb.fb_n_blocks--; // On a un bloc en moins du coup
-		write_block_size(current_vol, new_block + 1, sizeof(struct freeb_s), (unsigned char*) &fb); // écrire dans le fb suivant les nouvelles valeurs
+		write_bloc_size(current_vol, new_block + 1, sizeof(struct freeb_s), (unsigned char*) &fb); // écrire dans le fb suivant les nouvelles valeurs
 		super.super_first_free++; // le first free bouge puisque 
 	}
 	

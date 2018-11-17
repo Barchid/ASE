@@ -17,6 +17,9 @@ struct mbr_s {
     unsigned int mbr_magic; // Vérifie si le MBR a été correctement initialisé
 };
 
+// le MBR gardé en mémoire
+extern struct mbr_s mbr;
+
 // Charge le MBR en mémoire (dans la variable statique)
 unsigned int load_mbr();
 

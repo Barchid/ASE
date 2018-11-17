@@ -4,9 +4,6 @@
 #include <assert.h>
 #include <stdio.h>
 
-// le MBR gardé en variable statique
-static struct mbr_s mbr;
-
 unsigned int sector_of_bloc(unsigned int vol, unsigned int nbloc);
 
 unsigned int cylinder_of_bloc(unsigned int vol, unsigned int nbloc);
