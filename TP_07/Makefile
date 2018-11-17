@@ -1,5 +1,4 @@
-#ROOTDIR=/home/enseign/ASE
-ROOTDIR=.
+ROOTDIR=/home/enseign/ASE
 
 ALL = mknfs dfs mkvol dvol adhoc
 CC	= gcc
@@ -12,7 +11,7 @@ LIBS    = -L$(ROOTDIR)/lib -lhardware
 ### Main rules 
 ###------------------------------------------------------------
 
-current.o : current.c current.h
+bloc.o : bloc.c bloc.h
 	$(CC) $(CFLAGS) $(INCS) -c $<
 
 drive.o : drive.c drive.h hw.h
@@ -34,22 +33,22 @@ dvol.o: dvol.c drive.h mbr.h
 dvol: dvol.o drive.o mbr.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
-mknfs.o: mknfs.c drive.h mbr.h current.h
+mknfs.o: mknfs.c drive.h mbr.h bloc.h
 	$(CC) $(CFLAGS) $(INCS) -c $<
 
-mknfs: mknfs.o drive.o mbr.o current.o
+mknfs: mknfs.o drive.o mbr.o bloc.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
-dfs.o: dfs.c drive.h mbr.h current.h
+dfs.o: dfs.c drive.h mbr.h bloc.h
 	$(CC) $(CFLAGS) $(INCS) -c $<
 
-dfs: dfs.o drive.o mbr.o current.o
+dfs: dfs.o drive.o mbr.o bloc.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 	
-adhoc.o: adhoc.c drive.h mbr.h current.h
+adhoc.o: adhoc.c drive.h mbr.h bloc.h
 	$(CC) $(CFLAGS) $(INCS) -c $<
 
-adhoc: adhoc.o drive.o mbr.o current.o
+adhoc: adhoc.o drive.o mbr.o bloc.o
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 compile: $(ALL)
