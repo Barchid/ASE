@@ -1,9 +1,10 @@
+#include "tools.h"
 #include "hw.h"
 
 #ifndef _INODE_H_
 #define _INODE_H_
 
-#define NDIRECT 10 // le nombre de blocs directs contenus dans un fichier (inode)
+#define NDIRECT 10 // le nombre de blocs directs contenus dans un fichier
 #define BLOCK_NULL 0 // numéro de bloc de données qui veut dire que le bloc est plein de 0
 #define NNBPB (HDA_SECTORSIZE / sizeof(unsigned int)) // nombre de numéros de bloc par bloc (la taille du bloc divisé par la taille de unsigned int)
 #define BLOC_SIZE       HDA_SECTORSIZE  
@@ -29,5 +30,4 @@ int delete_inode(unsigned int inumber);
 
 unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, unsigned int do_allocate);
 
-void free_blocs(unsigned int blocs[], unsigned int size);
 #endif

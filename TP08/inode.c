@@ -152,7 +152,7 @@ unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, unsigned i
 		// Charger le bloc de 2indirect
 		read_bloc_size(current_vol, inode.inode_2indirect, NNBPB * sizeof(unsigned int), (unsigned char *) blocs);
 		
-		// TROUVER LE BON SOUS-BLOC à allouer
+		// TROUVER LE BON SOUS-BLOC où fbloc peut être
 		for(i=0;i<NNBPB;i++) {
 			if(fbloc )
 		}
