@@ -1,74 +1,95 @@
-# $Id: Makefile,v 1.2 2009/11/17 10:02:37 marquet Exp $
-##############################################################################
-
 ROOTDIR=/home/enseign/ASE
 
-CC	=  gcc
-CFLAGS	=  -m32 -Wall -Werror -ansi -pedantic
-CFLAGS  += -std=iso9899:1999
+ALL = mknfs dfs mkvol dvol adhoc if_cfile if_dfile if_nfile if_pfile
+CC	= gcc
+CFLAGS	= -m32 -Wall -pedantic 
 CFLAGS  += -g
-LIBDIR  =  $(ROOTDIR)/lib
-INCDIR  =  $(ROOTDIR)/include
-CFLAGS  += -I$(INCDIR)
-LIBS    = -lhardware
+INCS    = -I$(ROOTDIR)/include
+LIBS    = -L$(ROOTDIR)/lib -lhardware
 
-###------------------------------
-### Main targets 
+###-----------------------------	-------------------------------
+### Main rules 
 ###------------------------------------------------------------
-BINARIES= if_pfile if_nfile if_cfile if_dfile
-OBJECTS	= $(addsuffix .o,\
-	  tools ifile mount )
 
-all: $(BINARIES) $(OBJECTS)
+bloc.o : bloc.c bloc.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
 
+drive.o : drive.c drive.h hw.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
 
-###------------------------------
-### Binaries
-###------------------------------------------------------------
-if_cfile : if_cfile.o $(OBJECTS)
-if_nfile : if_nfile.o $(OBJECTS)
-if_dfile : if_dfile.o $(OBJECTS)
-if_pfile : if_pfile.o $(OBJECTS)
-adhoc: adhoc.o mbr.o drive.o bloc.o
-mknfs: mknfs.o mbr.o drive.o bloc.o
-dvol: dvol.o mbr.o drive.o
-mkvol: mkvol.o drive.o mbr.o
-dfs: dfs.o drive.o mbr.o bloc.o
-
-% : %.o
-	$(CC) -o $@ $^ -L$(LIBDIR) $(LIBS)
-
-###------------------------------
-### #include dependences 
-###------------------------------------------------------------
-# you may fill these lines with "make depend"
-if_cfile.o: if_cfile.c ifile.h inode.h tools.h mount.h
-if_dfile.o: if_dfile.c ifile.h inode.h tools.h mount.h
-if_nfile.o: if_nfile.c ifile.h inode.h tools.h mount.h
-if_pfile.o: if_pfile.c ifile.h inode.h tools.h mount.h
-ifile.o: ifile.c inode.h tools.h ifile.h 
-mount.o: mount.c hw.h tools.h 
-tools.o: tools.c tools.h
-drive.o: drive.c drive.h hw.h
 mbr.o: mbr.c mbr.h drive.h hw.h
-bloc.o: bloc.c bloc.h mbr.h drive.h hw.h
-adhoc.o: adhoc.c mbr.h drive.h bloc.h
-mknfs.o: mknfs.c mbr.h drive.h bloc.h
-dvol.o: dvol.c mbr.h drive.h
-mkvol.o: mkvol.c drive.h mbr.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
+
 inode.o: inode.c inode.h drive.h mbr.h bloc.h hw.h
-dfs.o: dfs.c bloc.h mbr.h drive.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< 
+ifile.o: ifile.c inode.h tools.h ifile.h 
+	$(CC) $(CFLAGS) $(INCS) -c $<
+	
+mount.o: mount.c hw.h tools.h 
+	$(CC) $(CFLAGS) $(INCS) -c $<
+	
+tools.o: tools.c tools.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
 
-###------------------------------
-### Misc.
-###------------------------------------------------------------
-.PHONY: clean realclean depend
+#### exécutables
+mkvol.o: mkvol.c drive.h mbr.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
+
+mkvol: mkvol.o drive.o mbr.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+
+dvol.o: dvol.c drive.h mbr.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
+
+dvol: dvol.o drive.o mbr.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+
+mknfs.o: mknfs.c drive.h mbr.h bloc.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
+
+mknfs: mknfs.o drive.o mbr.o bloc.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+
+dfs.o: dfs.c drive.h mbr.h bloc.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
+
+dfs: dfs.o drive.o mbr.o bloc.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+	
+adhoc.o: adhoc.c drive.h mbr.h bloc.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
+
+adhoc: adhoc.o drive.o mbr.o bloc.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+
+if_cfile.o: if_cfile.c ifile.h mount.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
+
+if_cfile: if_cfile.o tools.o ifile.o mount.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+	
+if_dfile.o: if_dfile.c ifile.h mount.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
+
+if_dfile: if_dfile.o tools.o ifile.o mount.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+	
+if_nfile.o: if_nfile.c ifile.h mount.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
+
+if_nfile: if_nfile.o tools.o ifile.o mount.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+	
+if_pfile.o: if_pfile.c ifile.h mount.h
+	$(CC) $(CFLAGS) $(INCS) -c $<
+
+if_pfile: if_pfile.o tools.o ifile.o mount.o
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
+
+compile: $(ALL)
+
 clean:
-	$(RM) *.o $(BINARIES)
-realclean: clean 
-depend : 
-	$(CC) $(CFLAGS) -MM $(INCDIR) *.c 
-
+	rm -f *.o *.s $(ALL)
+	
+	
