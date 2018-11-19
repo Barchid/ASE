@@ -17,7 +17,7 @@ LIBS    = -lhardware
 ###------------------------------------------------------------
 BINARIES= if_pfile if_nfile if_cfile if_dfile
 OBJECTS	= $(addsuffix .o,\
-	  tools ifile mount)
+	  tools ifile mount )
 
 all: $(BINARIES) $(OBJECTS)
 
@@ -29,6 +29,11 @@ if_cfile : if_cfile.o $(OBJECTS)
 if_nfile : if_nfile.o $(OBJECTS)
 if_dfile : if_dfile.o $(OBJECTS)
 if_pfile : if_pfile.o $(OBJECTS)
+adhoc: adhoc.o mbr.o drive.o bloc.o
+mknfs: mknfs.o mbr.o drive.o bloc.o
+dvol: dvol.o mbr.o drive.o
+mkvol: mkvol.o drive.o mbr.o
+dfs: dfs.o drive.o mbr.o bloc.o
 
 % : %.o
 	$(CC) -o $@ $^ -L$(LIBDIR) $(LIBS)
@@ -44,6 +49,15 @@ if_pfile.o: if_pfile.c ifile.h inode.h tools.h mount.h
 ifile.o: ifile.c inode.h tools.h ifile.h 
 mount.o: mount.c config.h tools.h 
 tools.o: tools.c tools.h
+drive.o: drive.c drive.h hw.h
+mbr.o: mbr.c mbr.h drive.h hw.h
+bloc.o: bloc.c bloc.h mbr.h drive.h hw.h
+adhoc.o: adhoc.c mbr.h drive.h bloc.h
+mknfs.o: mknfs.c mbr.h drive.h bloc.h
+dvol.o: dvol.c mbr.h drive.h
+mkvol.o: mkvol.c drive.h mbr.h
+inode.o: inode.c inode.h drive.h mbr.h bloc.h hw.h
+dfs.o: dfs.c bloc.h mbr.h drive.h
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< 
