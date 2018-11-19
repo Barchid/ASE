@@ -19,23 +19,23 @@
 #include "drive.h"
 #include "bloc.h"
 
-/* load super bloc of the $CURRENT_VOLUME
-   set current_volume accordingly */
+/* load super bloc of the $current_vol
+   set current_vol accordingly */
 static void
-load_current_volume ()
+load_current_vol ()
 {
-    char* current_volume_str;
+    char* current_vol_str;
     int status;
     
-    current_volume_str = getenv("CURRENT_VOLUME");
-    ffatal(current_volume_str != NULL, "no definition of $CURRENT_VOLUME"); 
+    current_vol_str = getenv("current_vol");
+    ffatal(current_vol_str != NULL, "no definition of $current_vol"); 
 
     errno = 0;
-    current_volume = strtol(current_volume_str, NULL, 10);
-    ffatal(!errno, "bad value of $CURRENT_VOLUME %s", current_volume_str);
+    current_vol = strtol(current_vol_str, NULL, 10);
+    ffatal(!errno, "bad value of $current_vol %s", current_vol_str);
     
-    status = load_super(current_volume);
-    ffatal(!status, "unable to load super of vol %d", current_volume);
+    status = load_super(current_vol);
+    ffatal(!status, "unable to load super of vol %d", current_vol);
 }
 
 /* return hw_config filename */
@@ -77,7 +77,7 @@ mount()
 
     /* Load MBR and current volume */
     load_mbr();
-    load_current_volume();
+    load_current_vol();
 }
 
 void
