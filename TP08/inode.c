@@ -4,7 +4,7 @@
 #include "mbr.h"
 #include "drive.h"
 #include "bloc.h"
-
+#include "inode.h"
 
 
 // créer un inode

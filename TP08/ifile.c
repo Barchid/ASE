@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <memory.h>
 
+#include "inode.h"
 #include "tools.h"
 #include "ifile.h"
 
