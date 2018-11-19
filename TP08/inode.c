@@ -55,6 +55,7 @@ unsigned int new_bloc_zero() {
 unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, unsigned int do_allocate) {
 	struct inode_s inode;
 	unsigned int blocs[NNBPB];
+	unsigned int sousblocs[NNBPB];
     unsigned int new;
 	unsigned int i;
 	
@@ -152,35 +153,51 @@ unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, unsigned i
 		// Charger le bloc de 2indirect
 		read_bloc_size(current_vol, inode.inode_2indirect, NNBPB * sizeof(unsigned int), (unsigned char *) blocs);
 		
-		// TROUVER LE BON SOUS-BLOC où fbloc peut être
+		// TROUVER LE BON SOUS-BLOC où fbloc peut se trouver
 		for(i=0;i<NNBPB;i++) {
-			if(fbloc )
-		}
-	}
-	// il est dans ma liste de blocs 2indirects
-	// if(fbloc < NNBPB * NNBPB) {
-	// 	if(inode.inode_2indirect == BLOCK_NULL) {
-	// 		// si je dois allouer
-	// 		if(do_allocate) {
-    //             // creer le bloc de 2indirect
-	// 			inode.inode_2indirect = new_block_zero(); // créer le bloc d'indirect
-
-    //             // creer le premier bloc d'indirection de 2indirect
-    //             new = new_block_zero();
-    //             read_block_size(current_vol, inode.inode_2indirect, NNBPB * sizeof(unsigned int), (unsigned char *) blocs);
-    //             blocs[0] = new;
-    //             write_block_size(current_vol, new, NNBPB * sizeof(unsigned int), (unsigned char *) blocs);
-    //             write_inode(inumber, &inode);
-    //             return ;
-	// 		}
+			// Je change d'itération si fbloc n'est pas compris dans le sous bloc i
+			if(fbloc >= (i+1)*NNBPB) {
+				continue;
+			}
+			// ici, je suis sûr que mon sous-bloc est le bon
 			
-	// 		return BLOCK_NULL;
-	// 	}
-
-
-	// } 
+			// Si le sous-bloc n'est pas alloué et que je dois
+			if(blocs[i] == BLOCK_NULL && do_allocate) {
+				// initialiser le sous-bloc d'indirection
+				blocs[i] = new_bloc_zero();
+				
+				// Pas réussi à allouer le block
+				if(blocs[i] == BLOCK_NULL) {
+					return BLOCK_NULL;
+				}
+			}
+			
+			// Si le sous-bloc n'est pas initialisé et que je ne dois pas allouer
+			if(blocs[i] == BLOCK_NULL) {
+				return BLOCK_NULL;
+			}
+			// décaler fbloc pour avoir un bon indice
+			fbloc-=(i+1)*NNBPB;
+			
+			// Lire le sous-bloc
+			read_bloc_size(current_vol, blocs[i], NNBPB * sizeof(unsigned int), (unsigned char *) sousblocs);
+			
+			// SI je dois allouer le fbloc et qu'il ne l'est pas
+			if(do_allocate && sousblocs[fbloc] == BLOCK_NULL) {
+				sousblocs[fbloc] = new_bloc();
+				
+				// Si mon allocation n'a pas marché, je vais d'office renvoyer block_null plus tard --> PAS BESOIN DE FAIRE UN IF
+				
+				// sauvegarder le changement dans le sous-bloc
+				write_bloc_size(current_vol, blocs[i], NNBPB * sizeof(unsigned int), (unsigned char *) sousblocs);
+			}
+			
+			return sousblocs[fbloc];
+		}
+		// Je ne rentrerai jamais ici car je check si i < NNBPB²
+	}
 	
-	// si fbloc > NNPB², ça veut dire qu'on essaie d'accéder un numéro trop grand pour notre fichier, donc -1
+	// si fbloc > NNBPB², ça veut dire qu'on essaie d'accéder un numéro trop grand pour notre fichier, donc NON
 	assert(false);
     return 0; // pas atteignable
 }

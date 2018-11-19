@@ -69,16 +69,16 @@ unsigned int create_vol(unsigned int cylinder, unsigned int sector, unsigned int
             assert(
                 cylinder < mbr.mbr_vols[i].vol_first_cylinder ||
                 cylinder > lastCylinderVol ||
-                (cylinder =  mbr.mbr_vols[i].vol_first_cylinder && sector < mbr.mbr_vols[i].vol_first_sector) ||
-                (cylinder =  lastCylinderVol && sector > lastSectorVol)
+                (cylinder ==  mbr.mbr_vols[i].vol_first_cylinder && sector < mbr.mbr_vols[i].vol_first_sector) ||
+                (cylinder == lastCylinderVol && sector > lastSectorVol)
             );
 
             // Vérifier que le dernier cylindre et secteur de la partition à créer n'est pas compris dans la partition[i]
             assert(
                 lastCylinder < mbr.mbr_vols[i].vol_first_cylinder ||
                 lastCylinder > lastCylinderVol ||
-                (lastCylinder =  mbr.mbr_vols[i].vol_first_cylinder && sector < mbr.mbr_vols[i].vol_first_sector) || 
-                (lastCylinder =  lastCylinderVol && lastSector > lastSectorVol)
+                (lastCylinder == mbr.mbr_vols[i].vol_first_cylinder && sector < mbr.mbr_vols[i].vol_first_sector) || 
+                (lastCylinder == lastCylinderVol && lastSector > lastSectorVol)
             );
         }
     }

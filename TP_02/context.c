@@ -22,6 +22,7 @@ int init_ctx(struct ctx_s *ctx, int stack_size, func_t f, void *args) {
 }
 
 void start_current_ctx() {
+	// exécuter le contexte courant
     current_ctx->ctx_state = CTX_EXEC;
     current_ctx->ctx_f(current_ctx->ctx_arg);
 	
