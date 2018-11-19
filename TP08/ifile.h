@@ -11,8 +11,6 @@
 #ifndef _IFILE_H_
 #define _IFILE_H_
 
-#include "inode.h"
-
 /* Despite the user does not need these definitions, our first
    implementation allocates file descriptors in the user space. Thus
    the definitions... */
