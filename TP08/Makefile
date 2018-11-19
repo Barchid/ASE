@@ -23,7 +23,7 @@ mbr.o: mbr.c mbr.h drive.h hw.h
 inode.o: inode.c inode.h drive.h mbr.h bloc.h hw.h
 	$(CC) $(CFLAGS) $(INCS) -c $<
 
-ifile.o: ifile.c ifile.h tools.h mbr.h bloc.h drive.h
+ifile.o: ifile.c ifile.h inode.h tools.h mbr.h bloc.h drive.h
 	$(CC) $(CFLAGS) $(INCS) -c $<
 	
 mount.o: mount.c hw.h tools.h mount.h drive.h mbr.h bloc.h
