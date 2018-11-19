@@ -12,7 +12,7 @@
 #include <assert.h>
 #include <errno.h>
 #include "hardware.h"
-#include "config.h"
+#include "hw.h"
 #include "tools.h"
 
 #include "mbr.h"

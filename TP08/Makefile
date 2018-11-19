@@ -47,7 +47,7 @@ if_dfile.o: if_dfile.c ifile.h inode.h tools.h mount.h
 if_nfile.o: if_nfile.c ifile.h inode.h tools.h mount.h
 if_pfile.o: if_pfile.c ifile.h inode.h tools.h mount.h
 ifile.o: ifile.c inode.h tools.h ifile.h 
-mount.o: mount.c config.h tools.h 
+mount.o: mount.c hw.h tools.h 
 tools.o: tools.c tools.h
 drive.o: drive.c drive.h hw.h
 mbr.o: mbr.c mbr.h drive.h hw.h
