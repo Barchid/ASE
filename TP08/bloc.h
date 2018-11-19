@@ -18,6 +18,9 @@ struct freeb_s {
 	unsigned int fb_next; // Numéro de bloc à partir duquel commence le prochain ensemble de blocs libres
 };
 
+// Mémoriser le numéro de volume courant pour pouvoir écrire dans save_super
+int current_vol;
+
 // fonctions de gestion des blocs libres
 
 void init_volume(unsigned int vol);

@@ -8,9 +8,6 @@
 // On garde en mémoire le super bloc (bloc 0)
 static struct super_s super;
 
-// Mémoriser le numéro de volume courant pour pouvoir écrire dans save_super
-static int current_vol;
-
 // Initialiser le superbloc d'un volume
 void init_volume(unsigned int vol) {
 	struct freeb_s fb;
