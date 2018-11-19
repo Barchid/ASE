@@ -45,7 +45,7 @@ get_hw_config ()
     char* hw_config;
 
     hw_config = getenv("HW_CONFIG");
-    return hw_config ? hw_config : DEFAULT_HW_CONFIG;
+    return hw_config ? hw_config : HW_INI;
 }
 
 static void
