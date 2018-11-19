@@ -65,7 +65,7 @@ open_ifile(file_desc_t *fd, unsigned int inumber)
     read_inode (inumber, &inode);    
     
     /* other trivial init */
-    fd->fds_size = inode.ind_size;
+    fd->fds_size = inode.inode_size;
     fd->fds_pos = 0;
 
     /* the buffer is full of zeros if the first bloc is zero, loaded
@@ -92,7 +92,7 @@ close_ifile(file_desc_t *fd)
     
     /* update the inode information (size) */
     read_inode(fd->fds_inumber, &inode);
-    inode.ind_size = fd->fds_size;
+    inode.inode_size = fd->fds_size;
     write_inode(fd->fds_inumber, &inode);
 }
 
