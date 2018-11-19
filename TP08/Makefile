@@ -11,7 +11,7 @@ LIBS    = -L$(ROOTDIR)/lib -lhardware
 ### Main rules 
 ###------------------------------------------------------------
 
-bloc.o : bloc.c bloc.h
+bloc.o : bloc.c bloc.h drive.h mbr.h hw.h
 	$(CC) $(CFLAGS) $(INCS) -c $<
 
 drive.o : drive.c drive.h hw.h
@@ -23,7 +23,7 @@ mbr.o: mbr.c mbr.h drive.h hw.h
 inode.o: inode.c inode.h drive.h mbr.h bloc.h hw.h
 	$(CC) $(CFLAGS) $(INCS) -c $<
 
-ifile.o: ifile.c inode.h tools.h ifile.h mbr.h bloc.h drive.h
+ifile.o: ifile.c ifile.h tools.h mbr.h bloc.h drive.h
 	$(CC) $(CFLAGS) $(INCS) -c $<
 	
 mount.o: mount.c hw.h tools.h mount.h drive.h mbr.h bloc.h
