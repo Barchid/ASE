@@ -255,7 +255,7 @@ int delete_inode(unsigned int inumber) {
 		free_bloc(inode.inode_2indirect);
 	}
 	
-	return 1;
+	return 0;
 }
 
 
