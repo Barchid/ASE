@@ -56,7 +56,7 @@ int load_super(unsigned int vol) {
     assert(super.super_magic == SUPER_MAGIC);
 
     current_vol = vol;
-	return 1;
+	return 0;
 }
 
 // Ecrire le super bloc en mémoire dans la partition

@@ -6,6 +6,16 @@
 #include "bloc.h"
 #include "inode.h"
 
+// libérer le tableau de numéro de blocs
+void free_blocs(unsigned int blocs[], unsigned int size) {
+	unsigned int i;
+	for(i = 0; i < size; i++) {
+		// Si le bloc est un BLOCK_NULL, on ne le free pas
+		if(blocs[i] != BLOCK_NULL){
+			free_bloc(blocs[i]);
+		}
+	}
+}
 
 // créer un inode
 unsigned int create_inode(enum file_type_e type) {
@@ -56,7 +66,6 @@ unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, unsigned i
 	struct inode_s inode;
 	unsigned int blocs[NNBPB];
 	unsigned int sousblocs[NNBPB];
-    unsigned int new;
 	unsigned int i;
 	
 	// check inumber != 0
@@ -198,7 +207,7 @@ unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, unsigned i
 	}
 	
 	// si fbloc > NNBPB², ça veut dire qu'on essaie d'accéder un numéro trop grand pour notre fichier, donc NON
-	assert(false);
+	assert(0);
     return 0; // pas atteignable
 }
 
@@ -253,20 +262,9 @@ int delete_inode(unsigned int inumber) {
 // lire l'inode
 void read_inode(unsigned int inumber, struct inode_s *inode) {
 	// Juste lire le bloc d'inode placé à l'inumber
-	read_bloc_size(current_vol, inumber, sizeof(struct inode_s), (unsigned char *) &inode);
+	read_bloc_size(current_vol, inumber, sizeof(struct inode_s), (unsigned char *) inode);
 }
 
 void write_inode(unsigned int inumber, struct inode_s *inode) {
-	write_block_size(current_vol, inumber, sizeof(struct inode_s), (unsigned char *) &inode);
-}
-
-// libérer le tableau de numéro de blocs
-void free_blocs(unsigned int blocs[], unsigned int size) {
-	unsigned int i;
-	for(i = 0; i < size; i++) {
-		// Si le bloc est un BLOCK_NULL, on ne le free pas
-		if(blocs[i] != BLOCK_NULL){
-			free_bloc(blocs[i]);
-		}
-	}
+	write_bloc_size(current_vol, inumber, sizeof(struct inode_s), (unsigned char *) inode);
 }

@@ -12,6 +12,7 @@
 #include <errno.h>
 #include "ifile.h"
 #include "mount.h"
+#include "inode.h"
 
 static void
 pfile(unsigned int inumber)
