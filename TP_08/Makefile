@@ -15,7 +15,7 @@ LIBS    = -lhardware
 ###------------------------------
 ### Main targets 
 ###------------------------------------------------------------
-BINARIES= if_pfile if_nfile if_cfile if_dfile adhoc mkvol dvol mknfs dfs
+BINARIES= if_pfile if_nfile if_cfile if_dfile adhoc mkvol dvol mknfs dfs vm
 OBJECTS	= $(addsuffix .o,\
 	  inode bloc mbr drive tools ifile mount)
 
@@ -34,6 +34,7 @@ mkvol: mkvol.o $(OBJECTS)
 dvol: dvol.o $(OBJECTS)
 mknfs: mknfs.o $(OBJECTS)
 dfs: dfs.o $(OBJECTS)
+vm: vm.o $(OBJECTS)
 
 % : %.o
 	$(CC) $(CFLAGS) -o $@ $^ -L$(LIBDIR) $(LIBS)
@@ -52,6 +53,7 @@ mkvol.o: mkvol.c mbr.h drive.h
 dvol.o: dvol.c mbr.h drive.h
 mknfs.o: mknfs.c mbr.h drive.h bloc.h
 dfs.o: dfs.c mbr.h drive.h bloc.h
+vm.o: vm.c mbr.h drive.h
 
 ifile.o: ifile.c inode.h tools.h ifile.h 
 mount.o: mount.c hw.h tools.h 
