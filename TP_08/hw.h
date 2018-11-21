@@ -2,8 +2,8 @@
 #define ARCHI_SIZE 4
 #endif
 
-#ifndef DEFAULT_HW_CONFIG
-#define DEFAULT_HW_CONFIG "hardware.ini"
+#ifndef HW_INI
+#define HW_INI "hardware.ini"
 
 //Paramètres du contrôleur IDE
 #define HDA_CMDREG 0x3F6

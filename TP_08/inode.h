@@ -1,7 +1,8 @@
-#include "hw.h"
-
 #ifndef _INODE_H_
 #define _INODE_H_
+
+#include "tools.h"
+#include "hw.h"
 
 #define NDIRECT 10 // le nombre de blocs directs contenus dans un fichier
 #define BLOCK_NULL 0 // numéro de bloc de données qui veut dire que le bloc est plein de 0
@@ -21,7 +22,7 @@ struct inode_s {
 
 void read_inode (unsigned int inumber, struct inode_s *inode);
 
-void write_inode (unsigned int inumber, const struct inode_s *inode);
+void write_inode (unsigned int inumber, struct inode_s *inode);
 
 unsigned int create_inode(enum file_type_e type); 
 
