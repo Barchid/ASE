@@ -15,7 +15,7 @@ load_current_volume ()
     char* current_volume_str;
     int current_volume;
     
-    current_volume_str = getenv("CURRENT_VOLUME");
+    current_volume_str = getenv("current_vol");
     if (! current_volume_str)
         return EXIT_FAILURE;
 
