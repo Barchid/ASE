@@ -21,13 +21,14 @@ struct ctx_s
     func_t *ctx_f;
     void *ctx_arg;
     enum ctx_state_e ctx_state;
-    struct ctx_s *ctx_next;
-	struct ctx_s *ctx_sem_next;
+    struct ctx_s *ctx_next; // contexte suivant (pour le round robin)
+	struct ctx_s *ctx_sem_next; // 
 };
 
+// structure du sémaphore
 struct sem_s {
 	int sem_cpt;
-	struct ctx_s *sem_ctx_list;
+	struct ctx_s *sem_ctx_list; // 
 };
 
 int init_ctx(struct ctx_s *ctx, int stack_size, func_t f, void *args);
