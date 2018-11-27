@@ -15,9 +15,10 @@
 #include "inode.h"
 #include "tools.h"
 #include "ifile.h"
+
 #include "mbr.h"
-#include "current.h"
-#include "hw.h"
+#include "bloc.h"
+#include "drive.h"
 
 /* the file bloc number of a given character position in a file */  
 #define bloc_of_pos(pos) ((pos) / DATA_BLOC_SIZE)
@@ -73,7 +74,7 @@ open_ifile(file_desc_t *fd, unsigned int inumber)
     if (! first_bloc) 
 	memset(fd->fds_buf, 0, DATA_BLOC_SIZE);
     else
-	read_block(current_vol, first_bloc, fd->fds_buf);
+	read_bloc(current_vol, first_bloc, fd->fds_buf);
 
     /* last trivial */
     fd->fds_dirty = FALSE;
@@ -110,7 +111,7 @@ flush_ifile(file_desc_t *fd)
 	vbloc = vbloc_of_fbloc(fd-> fds_inumber, fbloc, TRUE);
 
 	/* write back the buffer */
-	write_block(current_vol, vbloc, fd->fds_buf);
+	write_bloc(current_vol, vbloc, fd->fds_buf);
 
 	/* done */
 	fd-> fds_dirty = FALSE ; 
@@ -145,7 +146,7 @@ seek_ifile(file_desc_t *fd, int offset)
 	    memset(fd->fds_buf, 0, BLOC_SIZE);
 	else
 	    /* load the bloc */
-	    read_block(current_vol, vbloc, fd->fds_buf);
+	    read_bloc(current_vol, vbloc, fd->fds_buf);
     }
 }
 
@@ -202,14 +203,14 @@ writec_ifile(file_desc_t *fd, char c)
     if (ibloc_of_pos(fd->fds_pos) == BLOC_SIZE-1) {
 	/* write the buffer */
         ibloc = vbloc_of_fbloc(fd->fds_inumber, bloc_of_pos(fd->fds_pos), FALSE);
-	write_block(current_vol, ibloc, fd->fds_buf);
+	write_bloc(current_vol, ibloc, fd->fds_buf);
 	/* read the new buffer */
 	ibloc = vbloc_of_fbloc(fd->fds_inumber,
                                bloc_of_pos(fd->fds_pos+1), FALSE);
 	if (! ibloc) 
 	    memset(fd->fds_buf, 0, BLOC_SIZE);
 	else
-	    read_block(current_vol, ibloc, fd->fds_buf);
+	    read_bloc(current_vol, ibloc, fd->fds_buf);
 	fd->fds_dirty = FALSE;
     }
     
