@@ -1,25 +1,38 @@
- #include "mi_syscall.h"
- 
- // récupérer la page physique à partir de la page virtuelle et du process
- // ON SUPPOSE que N doit être plus petit que 255
- static int ppage_of_vpage(int process, unsigned vpage) {
-	 // Le processus a droit à accédder à page de 0 à N/2-1 (car il a N/2 pages)
-	 if(vpage > N/2-1) {
-		 return -1;
-	 }
-	 
-	 // SI je suis le process 0
-	 if(process == 0) {
-		 // Quand je veux vpage 0, je dois retourner page physique 1, etc
-		 // En fait, je saute juste la page 0
-		 return vpage + 1;
-	 }
-	 // SI je suis le process 1
-	 else if(process == 1){
-		 return vpage + N/2 + 1;
-	 }
-	 // Je suis un numéro erroné
-	 else {
-		 return -1;
-	 }
- }
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "hw.h"
+#include "hardware.h"
+#include "mi_syscall.h"
+#include "mi_user.h"
+
+ int sum(void *ptr) 
+{
+    int i;
+    int sum = 0; 
+    
+    for(i = 0; i < PAGE_SIZE * N/2 ; i++)
+        sum += ((char*)ptr)[i];
+    return sum;
+}
+
+// initialise le contexte et les handlers d'interruptions
+void init(void) {
+    void *ptr;
+    int res;
+
+     ptr = virtual_memory;
+
+    _int(SYSCALL_SWTCH_0);
+    memset(ptr, 1, PAGE_SIZE * N/2);
+
+    _int(SYSCALL_SWTCH_1);
+    memset(ptr, 3, PAGE_SIZE * N/2);
+
+    _int(SYSCALL_SWTCH_0);
+    res = sum(ptr);
+    printf("Resultat du processus 0 : %d\n",res);
+    _int(SYSCALL_SWTCH_1);
+    res = sum(ptr);
+    printf("Resultat processus 1 : %d\n",res);
+}

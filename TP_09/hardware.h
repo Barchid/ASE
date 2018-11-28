@@ -4,7 +4,7 @@
 
    hardware.h
 
-   Interface de la bibliothèque de simulation du matériel. 
+   Interface de la bibliothï¿½que de simulation du matï¿½riel. 
 
 */
 
@@ -28,8 +28,8 @@
 /**
  * Commandes de la MMU (registre MMU_CMD)
  */
-#define MMU_PROCESS	0xCC	/* Commande d'activation/désactivation de la MMU */
-#define MMU_RESET	0xD5	/* Commande de réinitialisation de la MMU */
+#define MMU_PROCESS	0xCC	/* Commande d'activation/dï¿½sactivation de la MMU */
+#define MMU_RESET	0xD5	/* Commande de rï¿½initialisation de la MMU */
 
 /**
  * Physical and virtual memory for MMU
@@ -39,30 +39,30 @@ extern void *virtual_memory;
 
 /**
  * prototype des fonctions-interruptions.
- * une interruption ne recoit aucun paramêtre "d'appel", 
+ * une interruption ne recoit aucun paramï¿½tre "d'appel", 
  * une interruption ne retourne aucun resultat, mais
- * sa terminaison restaure le contexte d'exécution du programme interrompu. 
+ * sa terminaison restaure le contexte d'exï¿½cution du programme interrompu. 
  */
 typedef void (*func_irq)(void);
 
 /**
  *      int init_hardware(const char *fileconfig);
- *          initialisation du matériel. Pas de "reinitialisation" possible.
- *          l'initialisation définit le matériel conformément aux spécifications
+ *          initialisation du matï¿½riel. Pas de "reinitialisation" possible.
+ *          l'initialisation dï¿½finit le matï¿½riel conformï¿½ment aux spï¿½cifications
  *          fournies par le fichier dont le nom est "fileconfig".
- *          retourne 0 en cas de problème lors de l'initialisation.
+ *          retourne 0 en cas de problï¿½me lors de l'initialisation.
  */ 
 extern int init_hardware(const char *fileconfig);
 
 /**
  *      IRQVECTOR 
  *          donne la base d'un tableau de pointeur de fonction du type
- *          func_irq. la fonction IRQVECTOR[n]() est appelée lorsque 
- *          l'interuption de niveau n est déclanchée par le matériel.
+ *          func_irq. la fonction IRQVECTOR[n]() est appelï¿½e lorsque 
+ *          l'interuption de niveau n est dï¿½clanchï¿½e par le matï¿½riel.
  */
 #define IRQ_VECOTR_SIZE 256
 extern func_irq *irq_vector;	/* n'utilisez pas cette variable    */
-#define IRQVECTOR irq_vector	/* préférez ce #define IRQVECTOR    */
+#define IRQVECTOR irq_vector	/* prï¿½fï¿½rez ce #define IRQVECTOR    */
 
 extern int SYSTICKDURATION;	/* microseconde entre les SYSTICK   */
 
@@ -72,46 +72,46 @@ extern int SYSTICKDURATION;	/* microseconde entre les SYSTICK   */
  */
 /* n'utilisez pas ces variables*/
 extern unsigned char ** HDA_masterbufferaddress, **HDB_masterbufferaddress;
-/* préférez ces #define MASTERBUFFER et SLAVEBUFFER */
+/* prï¿½fï¿½rez ces #define MASTERBUFFER et SLAVEBUFFER */
 #define MASTERBUFFER (*HDA_masterbufferaddress) 
 #define SLAVEBUFFER  (*HDB_masterbufferaddress) 
 
 /**
  *      BASEADDRESS_RAM
- *          variable associée à adresse de base de la mémoire globale
- *          de la machine. Cette mémoire est commune à tout les programmes 
- *          qui utilisent la librairie sur la même machine.  
+ *          variable associï¿½e ï¿½ adresse de base de la mï¿½moire globale
+ *          de la machine. Cette mï¿½moire est commune ï¿½ tout les programmes 
+ *          qui utilisent la librairie sur la mï¿½me machine.  
  *          
  */
 extern  unsigned char *baseGlobalMem;       /* n'utilisez pas cette variable */
-#define BASEADDRESS_RAM baseGlobalMem /* préférez ce #define BASEADDRESS_RAM */
+#define BASEADDRESS_RAM baseGlobalMem /* prï¿½fï¿½rez ce #define BASEADDRESS_RAM */
 
 /**
  *      int _in(int port);
- *          lecture du contenu du registre matériel n° "port".
+ *          lecture du contenu du registre matï¿½riel nï¿½ "port".
  *          retourne la valeur lue.
  */ 
 int     _in(int port);
 
 /**
  *      void _out(int port, int value);
- *          ecriture de la valeur "value" dans le registre matériel n° "port".
+ *          ecriture de la valeur "value" dans le registre matï¿½riel nï¿½ "port".
  */
 void    _out(int port, int value);
 
 /**
  *      void _sleep(int irq_level);
- *          Stoppe l'activité du microprocesseur jusqu'à l'occurence
- *          une interruption de niveau au moins égale à "irqLevel".
+ *          Stoppe l'activitï¿½ du microprocesseur jusqu'ï¿½ l'occurence
+ *          une interruption de niveau au moins ï¿½gale ï¿½ "irqLevel".
  */
 void    _sleep(int irq_level);
 
 /**
  *      void _mask(int irqLevel);
  *          - cache au microprocesseur l'occurence d'interruptions 
- *          de niveau inférieure à irqLevel.
- * 			- 16ème bit à 0 : passage en mode protégé
- * 			- 16ème bit à 1 : passage en mode user
+ *          de niveau infï¿½rieure ï¿½ irqLevel.
+ * 			- 16ï¿½me bit ï¿½ 0 : passage en mode protï¿½gï¿½
+ * 			- 16ï¿½me bit ï¿½ 1 : passage en mode user
  *
  */
 void     _mask(int irq_level);

@@ -16,10 +16,13 @@
 //		physical memory		ppage			delta
 // <--------------------><----------><-------------------->
 //		12 bits				8 bits			12 bits
+
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 #include "hardware.h"
 #include "mi_syscall.h"
+#include "mi_user.h"
+#include "hw.h"
 
 // structure qui sert à manipuler la TLB
 struct tlb_entry_s { 
@@ -33,66 +36,41 @@ struct tlb_entry_s {
 // numero du processus courant
 static int current_process;
 
-static int 
-sum(void *ptr) 
-{
-    int i;
-    int sum = 0; 
-    
-    for(i = 0; i < PAGE_SIZE * N/2 ; i++)
-        sum += ((char*)ptr)[i];
-    return sum;
-}
+ // récupérer la page physique à partir de la page virtuelle et du process
+ // ON SUPPOSE que N doit être plus petit que 255
+ static int ppage_of_vpage(int process, unsigned vpage) {
+	 // Le processus a droit à accédder à page de 0 à N/2-1 (car il a N/2 pages)
+	 if(vpage > N/2-1) {
+		 return -1;
+	 }
+	 
+	 // SI je suis le process 0
+	 if(process == 0) {
+		 // Quand je veux vpage 0, je dois retourner page physique 1, etc
+		 // En fait, je saute juste la page 0
+		 return vpage + 1;
+	 }
+	 // SI je suis le process 1
+	 else if(process == 1){
+		 return vpage + N/2 + 1;
+	 }
+	 // Je suis un numéro erroné
+	 else {
+		 return -1;
+	 }
+ }
 
-static void 
-switch_to_process0(void) 
-{
-    current_process = 0;
-    _out(MMU_CMD, MMU_RESET);
-}
-
-static void
-switch_to_process1(void) 
-{
-    current_process = 1;
-    _out(MMU_CMD, MMU_RESET);
-}
-
-int 
-main(int argc, char **argv) 
-{
-    void *ptr;
-    int res;
-
-    ... /* init_hardware(); */
-    
-
-    ptr = virtual_memory;
-
-    _int(16);
-    memset(ptr, 1, PAGE_SIZE * N/2);
-    _int(17);
-    memset(ptr, 3, PAGE_SIZE * N/2);
-
-    _int(16);
-    res = sum(ptr);
-    printf("Resultat du processus 0 : %d\n",res);
-    _int(17);
-    res = sum(ptr);
-    printf("Resultat processus 1 : %d\n",res);
-}
-
-int mmu_handler() {
+static void mmu_handler(void) {
 	unsigned int vaddr;
-	unsigned vpage: 12;
+	unsigned int vpage;
 	struct tlb_entry_s tlbe;
 	
 	// RECHERCHER adresse fautive
-	vaddr = _in(MMU_FAULT_ADDRESS);
+	vaddr = _in(MMU_FAULT_ADDR);
 	
 	// VOIR si faultAddr est valide 
 	// SI je ne suis pas une vraie adresse virtuelle
-	if(virtual_memory < vaddr || vaddr >= virtual_memory + VM_SIZE) {
+	if((vaddr & 0xFFFFFF) == ((int) virtual_memory)) {
 		printf("Adresse virtuelle %d invalide\n", vaddr);
 		return;
 	}
@@ -107,7 +85,7 @@ int mmu_handler() {
 	// Construire tlb_entry_s
 	tlbe.tlbe_vpage = vpage;
 	tlbe.tlbe_ppage = ppage_of_vpage(current_process, vpage);
-	tlbe.tlbe_rwx = 7;
+	tlbe.tlbe_xwr = 7;
 	tlbe.tlbe_access = 1;
 	
 	// ECRIRE tlb_entry_s dans TLB
@@ -116,8 +94,19 @@ int mmu_handler() {
 	_out(TLB_ADD_ENTRY, *((int*)(&tlbe))); //Dans mémoire, _out fait sur 32 bits
 }
 
-// initialise le contexte et les handlers d'interruptions
-void init(void) {
+static void switch_to_process0(void) 
+{
+    current_process = 0;
+    _out(MMU_CMD, MMU_RESET);
+}
+
+static void switch_to_process1(void) 
+{
+    current_process = 1;
+    _out(MMU_CMD, MMU_RESET);
+}
+
+int main(int argc, char **argv) {
     if(init_hardware(HW_INI) == 0) {
         exit(EXIT_FAILURE);
     }
@@ -126,4 +115,6 @@ void init(void) {
     IRQVECTOR[16] = switch_to_process0;
     IRQVECTOR[17] = switch_to_process1;
     _mask(0x1001);
+
+    init();
 }
