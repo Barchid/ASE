@@ -4,7 +4,9 @@ ROOTDIR = /home/enseign/ASE/
 LIBNAME = hardware
 
 CC	= gcc
-CFLAGS	= -Wall -ansi -pedantic
+CFLAGS	=  -m32 -Wall -Werror -ansi -pedantic
+CFLAGS  += -std=iso9899:1999
+CFLAGS  += -g
 LIBDIR  = $(ROOTDIR)
 INCDIR  = -I$(ROOTDIR)/include
 LIBS    = -L$(ROOTDIR)/lib -l$(LIBNAME)

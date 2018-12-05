@@ -23,6 +23,7 @@
 #include "hw_config.h"
 #include "swap.h"
 
+extern void user_process(); // pour jouer avec les matrices
 
 // structure qui sert à manipuler la TLB
 struct tlb_entry_s { 
@@ -32,10 +33,6 @@ struct tlb_entry_s {
 	unsigned tlbe_xwr :3; // droit exécution|write|read 
 	unsigned tlbe_access :1; // flag d'entrée utilisée ou non
 };
-
-// Page qui est dans la mémoire physique
-static unsigned int vpage_mapped = 0; // = 0 car il faut bien l'initialiser
-
 
 // stucture pour relier un numéro de page virtuelle à un numéro de page physique
 struct vm_mapping_s {
@@ -67,17 +64,16 @@ static int rr_ppage = 1;
 
 
 static void mmu_handler(void) {
-	unsigned int vaddr;
+	int vaddr;
 	unsigned int vpage;
 	struct tlb_entry_s tlbe;
-	int addr;
 	
 	// RECHERCHER adresse fautive
 	vaddr = _in(MMU_FAULT_ADDR);
 	
 	// VOIR si faultAddr est valide 
 	// SI je ne suis pas une vraie adresse virtuelle
-	if((vaddr & 0xFFFFFF) != ((int) virtual_memory)) {
+	if((vaddr & 0xFFFFFF) == ((int) virtual_memory)) {
 		printf("Adresse virtuelle %d invalide\n", vaddr);
 		return;
 	}
@@ -164,4 +160,8 @@ int main() {
 	for(i=0;i<PM_PAGES;i++) {
 		pm_mapping[i].pm_mapped = 0;
 	}
+
+	/* user mode */
+    user_process();
+    return 0;
 }
