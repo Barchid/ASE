@@ -23,7 +23,7 @@
 #include "mi_syscall.h"
 #include "mi_user.h"
 #include "hw_config.h"
-
+#include "swap.h"
 
 
 // structure qui sert à manipuler la TLB
@@ -61,6 +61,12 @@ static struct pm_maping_s pm_maping[PM_PAGES];
 
 // numéro de la prochaine page virtuelle à swapper de la mémoire physique
 static int rr_ppage = 1;
+
+//------------------------------------------------
+//------------------------------------------------
+//------------------------------------------------
+//------------------------------------------------
+
 
 static void mmu_handler(void) {
 	unsigned int vaddr;
