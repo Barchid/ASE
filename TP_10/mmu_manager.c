@@ -20,8 +20,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "hardware.h"
-#include "mi_syscall.h"
-#include "mi_user.h"
 #include "hw_config.h"
 #include "swap.h"
 
@@ -46,7 +44,7 @@ struct vm_mapping_s {
 };
 
 // tableau des pages virtuelles et leurs correspondances en page physique 
-static struct vm_maping_s vm_maping[VM_PAGES];
+static struct vm_mapping_s vm_mapping[VM_PAGES];
 
 // stucture pour relier un numéro de page physique à un numéro de page virtuelle
 struct pm_mapping_s {
@@ -55,7 +53,7 @@ struct pm_mapping_s {
 };
 
 // tableau des pages physique et leurs correspondances en page virtuelle
-static struct pm_maping_s pm_maping[PM_PAGES];
+static struct pm_mapping_s pm_mapping[PM_PAGES];
 
 // il faut initialiser les tableaux (vm et pm_mapped à F)
 
@@ -84,10 +82,6 @@ static void mmu_handler(void) {
 		return;
 	}
 	
-	
-	// Mettre la page de la mémoire physique dans le disque (en page 1)
-	store_to_swap(vpage_mapped, 1);
-	
 	// calculer la page virtuelle 
 	vpage = vaddr>>12 & 0xFFF; // 12 bits du milieu de vaddr;
 	
@@ -110,15 +104,15 @@ static void mmu_handler(void) {
 	// LIBERER une page physique (transfert mémoire + mise à jour TLB (del entry))
 	
 	// libérer la page physique d'avant SI elle existe
-	if(pm_mapping[rr_page].pm_mapped) {
-		store_to_swap(pm_mapping[rr_page].pm_vpage, rr_page);
+	if(pm_mapping[rr_ppage].pm_mapped) {
+		store_to_swap(pm_mapping[rr_ppage].pm_vpage, rr_ppage);
 		vm_mapping[pm_mapping[rr_ppage].pm_vpage].vm_mapped = 0; // on dit que 
 	}
 	
 	// supprimer entrée d'avant dans la TLB pour la page qu'on a jarté
 	// Construire tlb_entry_s
 	tlbe.tlbe_vpage = 0; // osef
-	tlbe.tlbe_ppage = rr_page;
+	tlbe.tlbe_ppage = rr_ppage;
 	tlbe.tlbe_xwr = 7; // osef
 	tlbe.tlbe_access = 1; //osef 
 	_out(TLB_DEL_ENTRY, *((int*)(&tlbe))); // Écriture de la suppression
@@ -128,32 +122,32 @@ static void mmu_handler(void) {
 	// CHARGER la vpage en mémoire physique (transfert mémoire + mise à jour TLB (add entry))
 	
 	// charger en mémoire physique une copie de ce qu'il y a sur le disque 
-	fetch_from_swap(vage, rr_page);
+	fetch_from_swap(vpage, rr_ppage);
 	
 	// mettre à jour le mapping des pages virtuelles
 	vm_mapping[vpage].vm_mapped = 1; // on dit que vpage est mappée en mémoire physique
-	vm_mapping[vpage].vm_ppage = rr_page; // mappée à la page rr_page en mémoire physique
+	vm_mapping[vpage].vm_ppage = rr_ppage; // mappée à la page rr_ppage en mémoire physique
 	
 	// mettre à jour le mapping des pages physiques
-	pm_mapping[rr_page].pm_mapped = 1; // on dit que rr_page a une page virtuelle
-	pm_mapping[rr_page].pm_vpage = vpage; // mappée à la page rr_page en mémoire physique
+	pm_mapping[rr_ppage].pm_mapped = 1; // on dit que rr_ppage a une page virtuelle
+	pm_mapping[rr_ppage].pm_vpage = vpage; // mappée à la page rr_ppage en mémoire physique
 	
 	// ecrire entrée dans TLB (vpage et rrpage)
 	tlbe.tlbe_vpage = vpage; // la vpage à charger en TLB
-	tlbe.tlbe_ppage = rr_page; // la correspondance physique
+	tlbe.tlbe_ppage = rr_ppage; // la correspondance physique
 	tlbe.tlbe_xwr = 7; // osef
 	tlbe.tlbe_access = 1; //osef 
 	_out(TLB_ADD_ENTRY, *((int*)(&tlbe))); // Écriture de la suppression
 	//----------------------------------------------------------------------------
 	
 	// mise à jour de rrpage
-	rr_page++;
-	if(rr_page == PM_PAGES) {
-		rr_page = 1;
+	rr_ppage++;
+	if(rr_ppage == PM_PAGES) {
+		rr_ppage = 1;
 	}
 }
 
-void init() {
+int main() {
 	unsigned int i;
 	if(init_hardware(HARDWARE_INI) == 0) {
         exit(EXIT_FAILURE);

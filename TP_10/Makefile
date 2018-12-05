@@ -31,7 +31,7 @@ Makefile.depends:
 
 include Makefile.depends
 
-mmu_manager: mmu_manager.o user_process.o matrix.o
+mmu_manager: mmu_manager.o user_process.o matrix.o swap.o
 oracle: oracle.o matrix.o
 
 ###------------------------------
