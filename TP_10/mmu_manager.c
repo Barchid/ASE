@@ -22,7 +22,7 @@
 #include "hardware.h"
 #include "mi_syscall.h"
 #include "mi_user.h"
-#include "hw.h"
+#include "hw_config.h"
 
 // structure qui sert à manipuler la TLB
 struct tlb_entry_s { 
@@ -107,7 +107,7 @@ static void switch_to_process1(void)
 }
 
 int main(int argc, char **argv) {
-    if(init_hardware(HW_INI) == 0) {
+    if(init_hardware(HARDWARE_INI) == 0) {
         exit(EXIT_FAILURE);
     }
 

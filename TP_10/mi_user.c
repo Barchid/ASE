@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "hw.h"
+#include "hw_config.h"
 #include "hardware.h"
 #include "mi_syscall.h"
 #include "mi_user.h"

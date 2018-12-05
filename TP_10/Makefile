@@ -1,50 +1,44 @@
-# $Id: Makefile,v 1.2 2009/11/17 10:02:37 marquet Exp $
+# $Id: Makefile 102 2009-11-03 13:14:39Z simon_duquennoy $
 ##############################################################################
+ROOTDIR = /home/enseign/ASE/
+LIBNAME = hardware
 
-ROOTDIR=/home/enseign/ASE
-
-CC	=  gcc
-CFLAGS	=  -m32 -Wall -Werror -ansi -pedantic
-CFLAGS  += -std=iso9899:1999
-CFLAGS  += -g
-LIBDIR  =  $(ROOTDIR)/lib
-INCDIR  =  $(ROOTDIR)/include
-CFLAGS  += -I$(INCDIR)
-LIBS    = -lhardware
+CC	= gcc
+CFLAGS	= -Wall -ansi -pedantic
+LIBDIR  = $(ROOTDIR)
+INCDIR  = -I$(ROOTDIR)/include
+LIBS    = -L$(ROOTDIR)/lib -l$(LIBNAME)
 
 ###------------------------------
 ### Main targets 
 ###------------------------------------------------------------
-BINARIES= mi_kernel
-OBJECTS	= $(addsuffix .o,\
-	   mi_kernel mi_user)
-all: $(BINARIES) $(OBJECTS)
+BINARIES= mmu_manager oracle
 
+all: $(BINARIES)
 
 ###------------------------------
-### Binaries
+### Main rules 
 ###------------------------------------------------------------
-mi_user : mi_user.o $(OBJECTS)
-mi_kernel : mi_kernel.o $(OBJECTS)
-% : %.o
-	$(CC) $(CFLAGS) -o $@ $^ -L$(LIBDIR) $(LIBS)
-
-###------------------------------
-### #include dependences 
-###------------------------------------------------------------
-# you may fill these lines with "make depend"
-mi_user.o: mi_user.c mi_user.h mi_syscall.h hw.h hardware.h
-mi_kernel.o: mi_kernel.c mi_user.h mi_syscall.h hw.h hardware.h
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< 
+	$(CC) $(CFLAGS) -c $< $(INCDIR)
+
+%: %.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+
+Makefile.depends:
+	$(CC) -MM *.c $(INCDIR) > Makefile.depends
+
+include Makefile.depends
+
+mmu_manager: mmu_manager.o user_process.o matrix.o
+oracle: oracle.o matrix.o
 
 ###------------------------------
 ### Misc.
 ###------------------------------------------------------------
 .PHONY: clean realclean depend
 clean:
-	$(RM) *.o $(BINARIES)
+	$(RM) *.o $(BINARIES) Makefile.depends
 realclean: clean 
-depend : 
-	$(CC) $(CFLAGS) -MM $(INCDIR) *.c 
+	$(RM) vdiskA.bin vdiskB.bin
