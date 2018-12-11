@@ -21,10 +21,10 @@ static int obj_consomme = 0;
 void producteur (void* arg)
 {
   while (1) {
-    produire_objet();           /* produire l'objet suivant */
+    produire_objet((int) arg);           /* produire l'objet suivant */
     sem_down(&vide);                  /* dec. nb places libres */
     sem_down(&mutex);                 /* entree en section critique */
-    mettre_objet();              /* mettre l'objet dans le tampon */
+    mettre_objet((int) arg);              /* mettre l'objet dans le tampon */
     sem_up(&mutex);                   /* sortie de section critique */
     sem_up(&plein);                   /* inc. nb place occupees */
   }
@@ -35,10 +35,10 @@ void consommateur (void* arg)
   while (1) {
     sem_down(&plein);                 /* dec. nb emplacements occupes */
     sem_down(&mutex);                 /* entree section critique */
-    retirer_objet ();           /* retire un objet du tampon */
+    retirer_objet ((int) arg);           /* retire un objet du tampon */
     sem_up(&mutex);                   /* sortie de la section critique */
     sem_up(&vide);                    /* inc. nb emplacements libres */
-    utiliser_objet();            /* utiliser l'objet */
+    utiliser_objet((int) arg);            /* utiliser l'objet */
   }
 }
 
