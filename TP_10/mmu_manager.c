@@ -67,7 +67,7 @@ static void mmu_handler(void) {
 	int vaddr;
 	unsigned int vpage;
 	struct tlb_entry_s tlbe;
-	
+
 	// RECHERCHER adresse fautive
 	vaddr = _in(MMU_FAULT_ADDR);
 	
@@ -107,7 +107,7 @@ static void mmu_handler(void) {
 	
 	// supprimer entrée d'avant dans la TLB pour la page qu'on a jarté
 	// Construire tlb_entry_s
-	tlbe.tlbe_vpage = 0; // osef
+	tlbe.tlbe_vpage = pm_mapping[rr_ppage].pm_vpage; // osef
 	tlbe.tlbe_ppage = rr_ppage;
 	tlbe.tlbe_xwr = 7; // osef
 	tlbe.tlbe_access = 1; //osef 
