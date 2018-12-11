@@ -67,7 +67,7 @@ static void mmu_handler(void) {
 	int vaddr;
 	unsigned int vpage;
 	struct tlb_entry_s tlbe;
-	
+
 	// RECHERCHER adresse fautive
 	vaddr = _in(MMU_FAULT_ADDR);
 	
