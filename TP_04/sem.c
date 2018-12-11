@@ -179,6 +179,8 @@ void switch_to_ctx(struct ctx_s *ctx)
             // Gérer un contexte bloqué parmis les autres
             current_ctx->ctx_next = ctx->ctx_next;
         }
+		
+		ctx = ctx->ctx_next;
     }
 
     irq_enable(); // Remettre interruptions

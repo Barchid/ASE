@@ -3,7 +3,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define N 5                        /* nombre de places dans le tampon */
+#define 100                        /* nombre de places dans le tampon */
 #define COUNTER 20
 
 void produire_objet();
