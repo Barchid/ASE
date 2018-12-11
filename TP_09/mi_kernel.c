@@ -69,8 +69,8 @@ static void mmu_handler(void) {
 	vaddr = _in(MMU_FAULT_ADDR);
 	
 	// VOIR si faultAddr est valide 
-	// SI je ne suis pas une vraie adresse virtuelle
-	if((vaddr & 0xFFFFFF) == ((int) virtual_memory)) {
+	// SI je ne suis pas une adresse virtuelle valide
+	if((vaddr & 0xFFFFFF) != ((int) virtual_memory)) {
 		printf("Adresse virtuelle %d invalide\n", vaddr);
 		return;
 	}

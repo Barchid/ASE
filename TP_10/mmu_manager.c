@@ -78,7 +78,7 @@ static void mmu_handler(void) {
 		return;
 	}
 	
-	// calculer la page virtuelle 
+	// calculer la page virtuelle de l'adresse fautive
 	vpage = vaddr>>12 & 0xFFF; // 12 bits du milieu de vaddr;
 	
 	// regarder si la page est mappée en mémoire physique
@@ -87,7 +87,7 @@ static void mmu_handler(void) {
 		
 		// on l'ajoute
 		tlbe.tlbe_vpage = vpage; // la page virtuelle qu'on veut
-		tlbe.tlbe_ppage = vm_mapping[vpage].vm_ppage; // numéro de page dans disque
+		tlbe.tlbe_ppage = vm_mapping[vpage].vm_ppage; // numéro de page physique dans disque
 		tlbe.tlbe_xwr = 7;
 		tlbe.tlbe_access = 1;
 		
@@ -101,13 +101,13 @@ static void mmu_handler(void) {
 	
 	// libérer la page physique d'avant SI elle existe
 	if(pm_mapping[rr_ppage].pm_mapped) {
-		store_to_swap(pm_mapping[rr_ppage].pm_vpage, rr_ppage);
-		vm_mapping[pm_mapping[rr_ppage].pm_vpage].vm_mapped = 0; // on dit que 
+		store_to_swap(pm_mapping[rr_ppage].pm_vpage, rr_ppage); // Je stocke la page dans le swap (disque) au 
+		vm_mapping[pm_mapping[rr_ppage].pm_vpage].vm_mapped = 0; // On dit que la page virtuelle qui se trouvait à l'endroit de la page physique qu'on a jarté est jartée ! (wtf mais bon..)
 	}
 	
-	// supprimer entrée d'avant dans la TLB pour la page qu'on a jarté
+	// supprimer entrée d'avant (rr_ppage) dans la TLB pour la page qu'on a jarté
 	// Construire tlb_entry_s
-	tlbe.tlbe_vpage = 0; // osef
+	tlbe.tlbe_vpage = pm_mapping[rr_ppage].pm_vpage; // osef
 	tlbe.tlbe_ppage = rr_ppage;
 	tlbe.tlbe_xwr = 7; // osef
 	tlbe.tlbe_access = 1; //osef 

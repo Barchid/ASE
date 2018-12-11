@@ -6,8 +6,8 @@
 
 extern void *virtual_memory;
 
+//#define MATRIX_OP MATRIX_ADD
 #define MATRIX_OP MATRIX_MUL
-/*#define MATRIX_OP MATRIX_MUL*/
 
 void user_process() {
 	unsigned short timestamp = (unsigned)time(NULL);
@@ -22,8 +22,8 @@ void user_process() {
 	/* print some informations */
 	printf("matrices size: %dx%d\n", MATRIX_SIZE, MATRIX_SIZE);
 	printf("vm used: %5d pages\n", 3 * sizeof(matrix) / PAGE_SIZE);
-	printf("pm space: %5d pages\n", 1 << 8);
-	printf("vm space: %5d pages\n", 1 << 12);
+	printf("pm space: %5d pages\n", PM_PAGES);
+	printf("vm space: %5d pages\n", VM_PAGES);
 	/* init matrices */
 	printf("initializing matrices\n");
 	matrix_init(matrix1);

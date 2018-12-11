@@ -1,7 +1,7 @@
 #ifndef _MATRIX_H_
 #define _MATRIX_H_
 
-#define MATRIX_SIZE 50
+#define MATRIX_SIZE 4
 #define MATRIX_ADD 0
 #define MATRIX_MUL 1
 
