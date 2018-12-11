@@ -87,8 +87,10 @@ new(struct _cmd *c)
 static void
 del(struct _cmd *c)
 {
-    printf("%s NYI\n", c->name);
-    delete_vol(0);
+	int numPartition;
+	puts("Entrez le numéro de la partition à delete :");
+	scanf("%d", &numPartition);
+    delete_vol(numPartition);
 }
 
 static void
