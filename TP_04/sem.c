@@ -45,7 +45,10 @@ static void empty_it(void)
     return;
 }
 
-static struct ctx_s main_ctx;
+// contexte du main()
+static void *main_esp;
+static void *main_ebp;
+
 static struct ctx_s *current_ctx = NULL; // Quand on est dans le main, NULL
 static struct ctx_s *ring = NULL;        // Quand on n'a encore aucun contexte initialisé
 
@@ -91,7 +94,7 @@ void yield()
             "\n\t"
             "movl %1, %%ebp"
             :
-            : "r"(main_ctx.ctx_esp), "r"(main_ctx.ctx_ebp));
+            : "r"(main_esp), "r"(main_ebp));
         irq_enable();
     }
 }
@@ -112,8 +115,7 @@ int init_ctx(struct ctx_s *ctx, int stack_size, func_t f, void *args)
     // Allouer la pile d'exécution
     if ((ctx->ctx_base = malloc(stack_size)) == NULL)
     {
-        perror("Error malloc \n");
-        return -1;
+        exit(EXIT_FAILURE);
     }
 
     // Mémoriser ebp/esp
@@ -141,8 +143,7 @@ void start_current_ctx()
 void switch_to_ctx(struct ctx_s *ctx)
 {
     // Vérifier que magic est ok
-    // Vérifier que le contexte n'est pas terminé (état CTX_END)
-    assert(ctx->ctx_state == CTX_INIT || ctx->ctx_state == CTX_EXEC || ctx->ctx_magic == CTX_MAGIC);
+    assert(ctx->ctx_magic == CTX_MAGIC);
 
     irq_disable(); // ignorer les interruptions pour ne pas ignorer
 
@@ -163,44 +164,45 @@ void switch_to_ctx(struct ctx_s *ctx)
                 "\n\t"
                 "movl %1, %%ebp"
                 :
-                : "r"(main_ctx.ctx_esp), "r"(main_ctx.ctx_ebp));
+                : "r"(main_esp), "r"(main_ebp));
         }
 
+		// SI ctx est terminé et qu'il n'est pas le seul contexte
         if(ctx != ctx->ctx_next && ctx->ctx_state == CTX_END)
         { 
+			// libérer ce contexte terminé et refaire le chaînage sans le ctx qu'on a supprimé
             free(ctx->ctx_base);
             current_ctx->ctx_next = ctx->ctx_next;
             free(ctx);
         }
         
+		// SI ctx est bloqué 
         if(ctx != ctx->ctx_next && ctx->ctx_state == CTX_BLK_SEM) {
-            // Gérer un contexte bloqué parmis les autres
+            // On passe au suivant, rien à faire ici
             ctx = ctx->ctx_next;
         }
     }
 
     irq_enable(); // Remettre interruptions
 
+	// mémoriser le contexte courant s'il existe
+	// (current_ctx est NULL quand on vient de lancer switch_to_ctx juste après le main)
     if (current_ctx)
     {
-        irq_disable();
         asm("movl %%esp, %0"
             "\n\t"
             "movl %%ebp, %1"
             : "=r"(current_ctx->ctx_esp), "=r"(current_ctx->ctx_ebp));
-        irq_enable();
     }
     else
     {
         // Contexte du main()
         // On mémorise le esp et ebp du main
         // pour le restaurer plus tard
-        irq_disable();
         asm("movl %%esp, %0"
             "\n\t"
             "movl %%ebp, %1"
-            : "=r"(main_ctx.ctx_esp), "=r"(main_ctx.ctx_ebp));
-        irq_enable();
+            : "=r"(main_esp), "=r"(main_ebp));
     }
 
     // ctx devient le contexte courant

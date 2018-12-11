@@ -42,37 +42,35 @@ void consommateur (void* arg)
   }
 }
 
-void produire_objet(){
+void produire_objet(int num){
     int i;
-    puts("Je produis un objet");
-    printf("Mutex : %d, Vide : %d, Plein :%d, Sum : %d\n\n", mutex.sem_cpt, vide.sem_cpt, plein.sem_cpt, vide.sem_cpt + plein.sem_cpt);
+    printf("PRODUCTEUR %d PRODUIT un objet.\n", num);
     for(i = 0; i < (1 << COUNTER); i++);
 }
 
-void mettre_objet(){
+void mettre_objet(int num){
     int i;
 
     obj_produis++;
-    puts("Je mets un objet");
-    printf("Produis : %d, Consommé : %d, Delta :%d\n", obj_produis, obj_consomme, obj_produis - obj_consomme);
-    printf("Mutex : %d, Vide : %d, Plein :%d, Sum : %d\n\n", mutex.sem_cpt, vide.sem_cpt, plein.sem_cpt, vide.sem_cpt + plein.sem_cpt);
+    printf("PRODUCTEUR %d MET UN OBJET dans le magasin.\n", num);
+    printf("Produits : %d, Consommé : %d, Delta :%d\n", obj_produis, obj_consomme, obj_produis - obj_consomme);
+    printf("Mutex : %d, Vide : %d, Plein :%d\n", mutex.sem_cpt, vide.sem_cpt, plein.sem_cpt, vide.sem_cpt + plein.sem_cpt);
     for(i = 0; i < (1 << COUNTER); i++);
 }
 
-void retirer_objet(){
+void retirer_objet(int num){
     int i;
     obj_consomme++;
 
-    puts("Je retire un objet");
+    printf("CONSOMMATEUR %d RETIRE UN OBJET dans le magasin.\n", num);
     printf("Produis : %d, Consommé : %d, Delta :%d\n", obj_produis, obj_consomme, obj_produis - obj_consomme);
     printf("Mutex : %d, Vide : %d, Plein :%d, Sum : %d\n\n", mutex.sem_cpt, vide.sem_cpt, plein.sem_cpt, vide.sem_cpt + plein.sem_cpt);
     for(i = 0; i < (1 << COUNTER); i++);
 }
 
-void utiliser_objet(){
+void utiliser_objet(int num){
     int i;
-    puts("J'utilise un objet");
-    printf("Mutex : %d, Vide : %d, Plein :%d, Sum : %d\n\n", mutex.sem_cpt, vide.sem_cpt, plein.sem_cpt, vide.sem_cpt + plein.sem_cpt);
+    printf("CONSOMMATEUR %d UTILISE un objet.\n", num);
     for(i = 0; i < (1 << COUNTER); i++);
 }
 
@@ -83,8 +81,12 @@ int main() {
     sem_init(&vide, N);                 /* nb de places libres */
     sem_init(&plein, 0);                /* nb de places occupees */
 
-    create_ctx(16384, producteur, NULL);
-    create_ctx(16384, consommateur, NULL);
+    create_ctx(16384, producteur, (void*) 1);
+	create_ctx(16384, producteur, (void*) 2);
+    create_ctx(16384, consommateur, (void*) 1);
+	create_ctx(16384, consommateur, (void*) 2);
+	create_ctx(16384, consommateur, (void*) 3);
+	create_ctx(16384, consommateur, (void*) 4);
 
     start_sched();
 
