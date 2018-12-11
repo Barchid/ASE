@@ -174,13 +174,9 @@ void switch_to_ctx(struct ctx_s *ctx)
         }
         
         if(ctx != ctx->ctx_next && ctx->ctx_state == CTX_BLK_SEM) {
-            printf("%p : %p\n", current_ctx, current_ctx->ctx_next);
-            printf("ahhhhh %d : %d\n", ctx->ctx_state, CTX_BLK_SEM);
             // Gérer un contexte bloqué parmis les autres
-            current_ctx->ctx_next = ctx->ctx_next;
+            ctx = ctx->ctx_next;
         }
-		
-		ctx = ctx->ctx_next;
     }
 
     irq_enable(); // Remettre interruptions
