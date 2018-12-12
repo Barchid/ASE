@@ -1,4 +1,5 @@
 matrix.o: matrix.c matrix.h
+mi_user.o: mi_user.c hw_config.h hardware.h mi_syscall.h mi_user.h
 mmu_manager.o: mmu_manager.c hardware.h hw_config.h swap.h
 oracle.o: oracle.c hw_config.h matrix.h
 swap.o: swap.c swap.h hardware.h hw_config.h
