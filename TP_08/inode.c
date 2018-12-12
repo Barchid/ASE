@@ -254,6 +254,9 @@ int delete_inode(unsigned int inumber) {
 		// free le bloc de 2indirection lui-même
 		free_bloc(inode.inode_2indirect);
 	}
+
+	// Free finalement l'inode lui-même
+	free_bloc(inumber);
 	
 	return 0;
 }
